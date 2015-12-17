@@ -1,0 +1,13 @@
+{
+  "unused": true,
+  "undef": true,
+  "predef": [
+    "$",
+    "_",
+    "angular",
+    "cordova",
+    "moment",
+    "navigator",
+    "window"
+  ]
+}

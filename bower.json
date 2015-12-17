@@ -1,7 +1,15 @@
 {
-  "name": "HelloIonic",
+  "name": "HomeTraxMobile",
   "private": "true",
   "devDependencies": {
-    "ionic": "driftyco/ionic-bower#1.2.0"
+    "angular-mocks": "1.4.3"
+  },
+  "dependencies": {
+    "ionic": "driftyco/ionic-bower#1.2.0",
+    "angular-messages": "1.4.3",
+    "angular-resource": "1.4.3",
+    "font-awesome": "~4.5.0",
+    "moment": "~2.10.6",
+    "underscore": "~1.8.3"
   }
 }

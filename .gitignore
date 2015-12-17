@@ -3,6 +3,7 @@
 typings/
 .DS_Store
 
+bower_components/
 node_modules/
 platforms/
 plugins/
