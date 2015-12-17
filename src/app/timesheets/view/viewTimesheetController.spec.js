@@ -2,19 +2,17 @@
 (function() {
   'use strict';
 
-  describe('starter.controllers: PlaylistsCtrl', function() {
+  describe('homeTrax.timesheets.view.viewTimesheetController', function() {
     var $controllerConstructor;
 
-    beforeEach(module('starter.controllers'));
+    beforeEach(module('homeTrax.timesheets.view.viewTimesheetController'));
 
     beforeEach(inject(function($controller) {
       $controllerConstructor = $controller;
     }));
 
     function createController() {
-      return $controllerConstructor('PlaylistsCtrl', {
-        $scope: {}
-      });
+      return $controllerConstructor('viewTimesheetController', {});
     }
 
     it('exists', function() {

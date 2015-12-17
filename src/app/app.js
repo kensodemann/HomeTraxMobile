@@ -4,71 +4,58 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers'])
+angular.module('homeTrax', [
+    'ionic',
+    'ngIOS9UIWebViewPatch',
+    'homeTrax.about.aboutController',
+    'homeTrax.main.mainController',
+    'homeTrax.projects',
+    'homeTrax.reports',
+    'homeTrax.timesheets'
+  ])
 
-.run(function($ionicPlatform) {
-  $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    if (window.cordova && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-      cordova.plugins.Keyboard.disableScroll(true);
+  .run(function($log, $ionicPlatform, $rootScope) {
+    $log.log('starting up');
 
-    }
+    $ionicPlatform.ready(function() {
+      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+      // for form inputs)
+      if (window.cordova && window.cordova.plugins.Keyboard) {
+        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+        cordova.plugins.Keyboard.disableScroll(true);
 
-    if (window.StatusBar) {
-      // org.apache.cordova.statusbar required
-      window.StatusBar.styleDefault();
-    }
-  });
-})
+      }
 
-.config(function($stateProvider, $urlRouterProvider) {
-  $stateProvider
+      if (window.StatusBar) {
+        // org.apache.cordova.statusbar required
+        window.StatusBar.styleDefault();
+      }
 
-    .state('app', {
-    url: '/app',
-    abstract: true,
-    templateUrl: 'templates/menu.html',
-    controller: 'AppCtrl'
+      $log.log('ready');
+    });
+
+    $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
+      $log.error('$stateChangeError');
+      $log.error(toState);
+      $log.error(error);
+    });
   })
 
-  .state('app.search', {
-    url: '/search',
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/search.html'
-      }
-    }
-  })
+  .config(function($stateProvider, $urlRouterProvider, $httpProvider) {
+    // user navigates to top level "route" (directory).
+    $urlRouterProvider.when('', '/login');
 
-  .state('app.browse', {
-      url: '/browse',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/browse.html'
-        }
-      }
-    })
-    .state('app.playlists', {
-      url: '/playlists',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/playlists.html',
-          controller: 'PlaylistsCtrl'
-        }
-      }
-    })
+    $httpProvider.defaults.withCredentials = true;
+    //$httpProvider.interceptors.push('authErrorInterceptor');
 
-  .state('app.single', {
-    url: '/playlists/:playlistId',
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/playlist.html',
-        controller: 'PlaylistCtrl'
-      }
-    }
+    $stateProvider
+      .state('app', {
+        url: '/app',
+        abstract: true,
+        templateUrl: 'app/main/main.html',
+        controller: 'mainController as controller'
+      });
+
+    // if none of the above states are matched, use this as the fallback
+    $urlRouterProvider.otherwise('/app/timesheets/list');
   });
-  // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/playlists');
-});

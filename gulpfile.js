@@ -50,8 +50,7 @@ var paths = {
   watch: [
     componentPaths.src + '/**/*.scss',
     componentPaths.src + '/**/*.js',
-    componentPaths.src + '/**/*.html',
-    '!' + componentPaths.src + '/**/*.spec.js'
+    componentPaths.src + '/**/*.html'
   ]
 };
 
@@ -124,11 +123,24 @@ gulp.task('buildCss', ['clean'], function() {
 
 gulp.task('buildJs', ['clean'], function() {
   var annotate = require('gulp-ng-annotate');
+  var preprocess = require('gulp-preprocess');
   var uglify = require('gulp-uglify');
   var release = gutil.env.type === 'release';
+
+  var context = release ? {
+    context: {
+      RELEASE: true
+    }
+  } : {
+    context: {
+      DEVELOPMENT: true
+    }
+  };
+
   return gulp
     .src(paths.src)
     .pipe(release ? gutil.noop() : sourcemaps.init())
+    .pipe(preprocess(context))
     .pipe(concat('homeTrax.js'))
     .pipe(annotate())
     .pipe(release ? gutil.noop() : sourcemaps.write())
