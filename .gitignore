@@ -1,0 +1,17 @@
+.idea
+.vscode/
+typings/
+.DS_Store
+
+node_modules/
+platforms/
+plugins/
+
+src/app/**/*.css
+src/app/**/*.map
+src/scss/**/*.css
+src/scss/**/*.map
+
+www/
+
+*.log
