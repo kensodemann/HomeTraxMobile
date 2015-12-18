@@ -1,9 +1,19 @@
 (function() {
   'use strict';
 
-  angular.module('homeTrax.main.mainController', []).controller('mainController', MainController);
+  angular.module('homeTrax.main.mainController', [
+    'ui.router',
+    'homeTrax.authentication.authenticationService'
+  ]).controller('mainController', MainController);
 
-  function MainController($log) {
-    $log.log('Instantiating main controller');
+  function MainController($state, authenticationService) {
+    var controller = this;
+
+    controller.logout = logout;
+
+    function logout() {
+      authenticationService.logoutUser();
+      $state.go('login');
+    }
   }
 }());

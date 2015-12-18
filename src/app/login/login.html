@@ -1,0 +1,29 @@
+<ion-view>
+  <ion-content>
+    <div style="margin: 18px 0;"></div>
+
+    <ng-include src="'app/common/templates/homeTraxLogo.html'"></ng-include>
+
+    <form>
+      <ion-list>
+        <label class="item item-input">
+          <span class="input-label">Username:</span>
+          <input type="text" ng-model="controller.username" ng-change="controller.clearErrorMessage()">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Password:</span>
+          <input type="password" ng-model="controller.password" ng-change="controller.clearErrorMessage()">
+        </label>
+        <div class="item alert-danger" ng-show="!!controller.errorMessage">
+          <span ng-bind="controller.errorMessage"></span>
+        </div>
+        <ion-item>
+          <button class="button button-block button-energized"
+                  ng-disabled="!controller.username || !controller.password"
+                  ng-click="controller.login()">Log In
+          </button>
+        </ion-item>
+      </ion-list>
+    </form>
+  </ion-content>
+</ion-view>
