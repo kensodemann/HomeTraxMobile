@@ -1,1 +1,13 @@
-$ionicons-font-path: "fonts" !default;
+@import "colors";
+
+$ionicons-font-path: "fonts";
+
+$light:        #fff;
+$stable:       $theme-subheader;
+$positive:     $theme-primary;
+$calm:         $theme-info;
+$balanced:     $theme-success;
+$energized:    $theme-warning;
+$assertive:    $theme-danger;
+$royal:        $theme-alternate;
+$dark:         $theme-dark;
