@@ -21,6 +21,7 @@ var paths = {
   ],
   lib: [
     componentPaths.lib.ionicBundle.dev,
+    componentPaths.lib.angularLocalStorage.dev,
     componentPaths.lib.angularIos9UiWebviewPatch.dev,
     componentPaths.lib.angularMessages.dev,
     componentPaths.lib.angularResource.dev,
@@ -29,6 +30,7 @@ var paths = {
   ],
   libRelease: [
     componentPaths.lib.ionicBundle.release,
+    componentPaths.lib.angularLocalStorage.release,
     componentPaths.lib.angularIos9UiWebviewPatch.release,
     componentPaths.lib.angularMessages.release,
     componentPaths.lib.angularResource.release,
@@ -159,7 +161,7 @@ gulp.task('buildLibs', ['clean'], function() {
 });
 
 // End user tasks
-gulp.task('default', ['lint', 'style', 'buildCss', 'buildJs', 'buildLibs', 'copyFonts', 'copyImages', 'copyViews']);
+gulp.task('default', ['lint', 'style', 'test', 'buildCss', 'buildJs', 'buildLibs', 'copyFonts', 'copyImages', 'copyViews']);
 
 gulp.task('dev', ['default'], function() {
   return gulp.watch(paths.watch, ['default']);

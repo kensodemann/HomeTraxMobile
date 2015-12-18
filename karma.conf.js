@@ -9,6 +9,7 @@ module.exports = function(config) {
 
     files: [
       componentPaths.lib.ionicBundle.dev,
+      componentPaths.lib.angularLocalStorage.dev,
       componentPaths.lib.angularMessages.dev,
       componentPaths.lib.angularMocks.dev,
       componentPaths.lib.angularResource.dev,

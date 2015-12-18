@@ -14,6 +14,10 @@ module.exports = {
       dev: 'patches/angular-ios9-uiwebview.patch.js',
       release: 'patches/angular-ios9-uiwebview.patch.min.js'
     },
+    angularLocalStorage: {
+      dev: 'bower_components/angular-local-storage/dist/angular-local-storage.js',
+      release: 'bower_components/angular-local-storage/dist/angular-local-storage.min.js'
+    },
     angularMessages: {
       dev: 'bower_components/angular-messages/angular-messages.js',
       release: 'bower_components/angular-messages/angular-messages.min.js'

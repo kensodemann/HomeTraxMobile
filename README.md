@@ -23,9 +23,9 @@ you will need to install a few tools in order to do any real work.
 
 Here are the most useful gulp tasks. For a list of the other ones, see the gulpfile.js
 
-  - gulp - this does a dev build (without any tests)
+  - gulp - this does a dev build, including tests, linting, and code style checks
   - gulp dev - does a dev build and waits for changes
-  - gulp test - run the tests (I usually run them from WebStorm, but you can run them from gulp)
+  - gulp test - just run the tests
   
 You can also run one of these command to kick off the tests:
   - karma start - run the tests once
@@ -35,3 +35,5 @@ You can also run one of these command to kick off the tests:
 
 For how, this is not deployed in any stores, nor is it shared via ionic view. I will probably just deploy it
 manually to my devices when the time comes (this is just used by me, after all).
+
+In order to do a build for deployment: ```gulp --type=release```
