@@ -14,7 +14,7 @@
       });
     });
 
-  function LoginController($state, authenticationService) {
+  function LoginController($state, $ionicHistory, authenticationService, waitSpinner) {
     var controller = this;
 
     controller.username = '';
@@ -25,13 +25,16 @@
     controller.clearErrorMessage = clearErrorMessage;
 
     function login() {
+      waitSpinner.show();
       var p = authenticationService.authenticateUser(controller.username, controller.password);
       p.then(handleResult);
       return p;
 
       function handleResult(success) {
         controller.password = '';
+        waitSpinner.hide();
         if (success) {
+          $ionicHistory.clearCache();
           $state.go('app.timesheets.view');
         }
         else {
