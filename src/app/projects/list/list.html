@@ -1,5 +1,5 @@
 <ion-view view-title="All Projects">
-  <div class="bar bar-subheader bar-calm">
+  <div class="bar bar-subheader bar-stable">
     <div class="row">
       <div class="col list-header-col">
         Project Name
@@ -14,6 +14,14 @@
   </div>
 
   <ion-content class="has-subheader">
-    <h2>The project list will go here</h2>
+    <ion-list>
+      <ion-item ng-repeat="project in controller.projects">
+        <div class="row row-no-padding">
+          <div class="col" ng-bind="project.name"></div>
+          <div class="col" ng-bind="project.jiraTaskId"></div>
+          <div class="col" ng-bind="project.sbvbTaskId"></div>
+        </div>
+      </ion-item>
+    </ion-list>
   </ion-content>
 </ion-view>

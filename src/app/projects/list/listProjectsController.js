@@ -2,8 +2,10 @@
   'use strict';
 
   angular.module('homeTrax.projects.list.listProjectsController', [
-    'ui.router'
-  ]).controller('listProjectsController', listProjectsController)
+    'ui.router',
+    'homeTrax.common.resources.Project',
+    'homeTrax.common.services.waitSpinner'
+  ]).controller('listProjectsController', ListProjectsController)
     .config(function($stateProvider) {
       $stateProvider.state('app.projects.list', {
         url: '/list',
@@ -16,6 +18,16 @@
       });
     });
 
-  function listProjectsController() {
+  function ListProjectsController(Project, waitSpinner) {
+    var controller = this;
+
+    controller.projects =  Project.query();
+
+    activate();
+
+    function activate() {
+      waitSpinner.show();
+      controller.projects.$promise.finally(waitSpinner.hide);
+    }
   }
 }());
