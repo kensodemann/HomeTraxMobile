@@ -5,7 +5,7 @@
     "angular-mocks": "1.4.3"
   },
   "dependencies": {
-    "ionic": "driftyco/ionic-bower#1.2.0",
+    "ionic": "driftyco/ionic-bower#1.2.1",
     "angular-messages": "1.4.3",
     "angular-resource": "1.4.3",
     "font-awesome": "~4.5.0",
