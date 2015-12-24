@@ -3,20 +3,33 @@
   'use strict';
 
   describe('homeTrax.projects.list.listProjectsController', function() {
+    var mockProjectEditor;
+    var mockProjectEditorConstructor;
     var mockWaitSpinner;
 
     var config;
+    var $scope;
 
     var $controllerConstructor;
     var $httpBackend;
 
     beforeEach(module('homeTrax.projects.list.listProjectsController'));
 
-    beforeEach(inject(function($controller, _$httpBackend_, _config_) {
+    beforeEach(inject(function($rootScope, $controller, _$httpBackend_, _config_) {
       $controllerConstructor = $controller;
       $httpBackend = _$httpBackend_;
       config = _config_;
+      $scope = $rootScope.$new();
     }));
+
+    beforeEach(function() {
+      mockProjectEditor = sinon.stub({
+        show: function() {
+        }
+      });
+      mockProjectEditorConstructor = sinon.stub();
+      mockProjectEditorConstructor.returns(mockProjectEditor);
+    });
 
     beforeEach(function() {
       mockWaitSpinner = sinon.stub({
@@ -35,6 +48,8 @@
 
     function createController() {
       return $controllerConstructor('listProjectsController', {
+        $scope: $scope,
+        ProjectEditor: mockProjectEditorConstructor,
         waitSpinner: mockWaitSpinner
       });
     }

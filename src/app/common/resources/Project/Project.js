@@ -8,7 +8,7 @@
 
   function Project($resource, config) {
     return $resource(config.dataService + '/projects/:id', {
-      id: '@ID'
+      id: '@_id'
     });
   }
 }());

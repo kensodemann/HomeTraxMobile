@@ -1,0 +1,15 @@
+@import "colors";
+
+.text-error {
+  color: $theme-danger;
+}
+
+.ion-input-error {
+  border-bottom-color: $theme-danger;
+  border-bottom-style: solid;
+  border-bottom-width: 3px;
+}
+
+textarea.ng-invalid {
+  border: 1px solid $theme-danger;
+}

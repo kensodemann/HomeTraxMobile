@@ -11,6 +11,7 @@
     var $scope;
     var $controllerConstructor;
     var authDfd;
+    var clearDfd;
 
     beforeEach(module('homeTrax.login.loginController'));
 
@@ -18,6 +19,7 @@
       $scope = $rootScope.$new();
       $controllerConstructor = $controller;
       authDfd = $q.defer();
+      clearDfd = $q.defer();
     }));
 
     beforeEach(function() {
@@ -31,8 +33,12 @@
     beforeEach(function() {
       mockIonicHistory = sinon.stub({
         clearCache: function() {
+        },
+
+        clearHistory: function() {
         }
       });
+      mockIonicHistory.clearCache.returns(clearDfd.promise);
     });
 
     beforeEach(function() {
@@ -88,6 +94,9 @@
       it('it redirects to the current timesheet once the cache clears', function() {
         callLoginWithSuccess();
 
+        expect(mockState.go.called).to.be.false;
+        clearDfd.resolve();
+        $scope.$digest();
         expect(mockState.go.calledOnce).to.be.true;
         expect(mockState.go.calledWith('app.timesheets.view')).to.be.true;
       });
@@ -120,7 +129,7 @@
         controller.login();
         expect(mockWaitSpinner.hide.called).to.be.false;
         authDfd.resolve(true);
-        $scope.$apply();
+        $scope.$digest();
         expect(mockWaitSpinner.hide.calledOnce).to.be.true;
       });
 
@@ -129,7 +138,7 @@
         controller.password = 'FireW00d';
         controller.login();
         authDfd.resolve(true);
-        $scope.$apply();
+        $scope.$digest();
       }
 
       function callLoginWithFailure() {
@@ -137,7 +146,7 @@
         controller.password = 'FireW00d';
         controller.login();
         authDfd.resolve(false);
-        $scope.$apply();
+        $scope.$digest();
       }
     });
 

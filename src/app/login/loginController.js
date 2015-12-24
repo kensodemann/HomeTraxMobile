@@ -34,8 +34,10 @@
         controller.password = '';
         waitSpinner.hide();
         if (success) {
-          $ionicHistory.clearCache();
-          $state.go('app.timesheets.view');
+          $ionicHistory.clearHistory();
+          $ionicHistory.clearCache().then(function(){
+            $state.go('app.timesheets.view');
+          });
         }
         else {
           controller.errorMessage = 'Invalid Username or Password';

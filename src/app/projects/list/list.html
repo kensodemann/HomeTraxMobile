@@ -15,7 +15,8 @@
 
   <ion-content class="has-subheader">
     <ion-list>
-      <ion-item ng-repeat="project in controller.projects">
+      <ion-item ng-repeat="project in controller.projects"
+                ng-click="controller.edit(project)">
         <div class="row row-no-padding">
           <div class="col" ng-bind="project.name"></div>
           <div class="col" ng-bind="project.jiraTaskId"></div>
