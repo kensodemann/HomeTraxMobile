@@ -2,7 +2,9 @@
   'use strict';
 
   angular.module('homeTrax.about.aboutController', [
-    'ui.router'
+    'ui.router',
+    'homeTrax.common.core.ClientVersion',
+    'homeTrax.common.resources.ServerVersion'
   ]).controller('aboutController', AboutController)
     .config(function($stateProvider) {
       $stateProvider.state('app.about', {
@@ -16,9 +18,17 @@
       });
     });
 
-  function AboutController() {
-    this.version = 'Fervent Yokel (2.0.3)';
-    this.releaseDate = '2015-12-27';
-    this.serverVersion = 'Lily (2.0.1)';
+  function AboutController(ServerVersion, ClientVersion) {
+    var controller = this;
+
+    controller.clientVersion = ClientVersion;
+
+    activate();
+
+    function activate() {
+      ServerVersion.query(function(v) {
+        controller.serverVersion = v[0];
+      });
+    }
   }
 }());

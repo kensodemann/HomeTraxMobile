@@ -5,13 +5,13 @@
 
     <dl class="center" style="width: 26em">
       <dt>Version</dt>
-      <dd ng-bind="controller.version"></dd>
+      <dd ng-bind="controller.clientVersion.name"></dd>
       <dt>Release Date</dt>
-      <dd ng-bind="controller.releaseDate | date: 'mediumDate'"></dd>
+      <dd ng-bind="controller.clientVersion.releaseDate | date: 'mediumDate'"></dd>
       <dt>Server Version</dt>
-      <dd ng-bind="controller.serverVersion"></dd>
+      <dd ng-bind="controller.serverVersion.name"></dd>
       <dt>Copyright</dt>
-      <dd>&copy; 2015 Kenneth W. Sodemann</dd>
+      <dd>&copy; <span ng-bind="controller.clientVersion.copyright"></span></dd>
     </dl>
   </ion-content>
 </ion-view>
