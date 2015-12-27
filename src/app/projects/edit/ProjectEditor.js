@@ -20,21 +20,34 @@
       controller.deferredModal = undefined;
       controller.title = '';
 
-      controller.show = showEditor;
+      controller.create = createProject;
+      controller.edit = editProject;
       controller.save = saveProject;
       controller.cancel = hideEditor;
 
       activate();
 
-      function showEditor(mode, project, projects) {
+      function createProject(projects){
+        var p = new Project();
+        p.status = Status.active;
+        controller.title = 'New Project';
+        controller.mode = EditorMode.create;
+        showEditor(p, projects);
+      }
+
+      function editProject(project, projects){
+        controller.title = 'Edit Project';
+        controller.mode = EditorMode.edit;
+        showEditor(project, projects);
+      }
+
+      function showEditor(project, projects) {
         initializeController();
         showModal();
 
         function initializeController() {
           controller.allProjects = projects;
           controller.project = project;
-          controller.mode = mode;
-          controller.title = mode === EditorMode.create ? 'New Project' : 'Edit Project';
 
           angular.copy(project, controller.editModel);
 

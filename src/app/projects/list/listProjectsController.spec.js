@@ -9,11 +9,16 @@
 
     var config;
     var $scope;
+    var testData;
 
     var $controllerConstructor;
     var $httpBackend;
 
     beforeEach(module('homeTrax.projects.list.listProjectsController'));
+
+    beforeEach(function() {
+      initializeTestData();
+    });
 
     beforeEach(inject(function($rootScope, $controller, _$httpBackend_, _config_) {
       $controllerConstructor = $controller;
@@ -24,7 +29,10 @@
 
     beforeEach(function() {
       mockProjectEditor = sinon.stub({
-        show: function() {
+        create: function() {
+        },
+
+        edit: function() {
         }
       });
       mockProjectEditorConstructor = sinon.stub();
@@ -62,15 +70,13 @@
       });
 
       it('assigns the projects', function() {
-        $httpBackend.expectGET(config.dataService + '/projects').respond([1, 2, 9, 8, 7]);
+        $httpBackend.expectGET(config.dataService + '/projects').respond(200, testData);
         var controller = createController();
         $httpBackend.flush();
-        expect(controller.projects.length).to.equal(5);
-        expect(controller.projects[0]).to.equal(1);
-        expect(controller.projects[1]).to.equal(2);
-        expect(controller.projects[2]).to.equal(9);
-        expect(controller.projects[3]).to.equal(8);
-        expect(controller.projects[4]).to.equal(7);
+        expect(controller.projects.length).to.equal(3);
+        expect(controller.projects[0]._id).to.equal(314);
+        expect(controller.projects[1]._id).to.equal(73);
+        expect(controller.projects[2]._id).to.equal(42);
       });
 
       it('shows the wait spinner', function() {
@@ -95,6 +101,49 @@
         $httpBackend.flush();
         expect(mockWaitSpinner.hide.calledOnce).to.be.true;
       });
+
+      it('builds a project editors object', function() {
+        $httpBackend.expectGET(config.dataService + '/projects').respond();
+        var controller = createController();
+        $httpBackend.flush();
+        expect(mockProjectEditorConstructor.calledOnce).to.be.true;
+        expect(controller.editor).to.equal(mockProjectEditor);
+      });
     });
+
+    describe('editing a project', function() {
+      it('passes the project to the editor', function() {
+        $httpBackend.expectGET(config.dataService + '/projects').respond(200, testData);
+        var controller = createController();
+        $httpBackend.flush();
+        controller.edit(controller.projects[1]);
+        expect(mockProjectEditor.edit.calledOnce).to.be.true;
+        expect(mockProjectEditor.edit.calledWith(controller.projects[1], controller.projects)).to.be.true;
+      });
+    });
+
+    describe('creating a project', function() {
+      it('opens the editor for create', function() {
+        $httpBackend.expectGET(config.dataService + '/projects').respond(200, testData);
+        var controller = createController();
+        $httpBackend.flush();
+        controller.create();
+        expect(mockProjectEditor.create.calledOnce).to.be.true;
+        expect(mockProjectEditor.create.calledWith(controller.projects)).to.be.true;
+      });
+    });
+
+    function initializeTestData() {
+      testData = [{
+        _id: 314,
+        name: 'Cherry Pi'
+      }, {
+        _id: 73,
+        name: 'Big Bang Theory'
+      }, {
+        _id: 42,
+        name: 'The Answer'
+      }];
+    }
   });
 }());

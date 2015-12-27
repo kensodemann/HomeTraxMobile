@@ -94,24 +94,24 @@
       });
     });
 
-    describe('show', function() {
+    describe('edit', function() {
       var projectEditor;
       beforeEach(function() {
         projectEditor = new ProjectEditor($scope);
       });
 
       it('sets the project model in the controller', function() {
-        projectEditor.show(EditorMode.edit, {_id: 42, name: 'Douglas Adams'}, []);
+        projectEditor.edit({_id: 42, name: 'Douglas Adams'}, []);
         expect(projectEditor.project).to.deep.equal({_id: 42, name: 'Douglas Adams'});
       });
 
       it('sets the projects list', function() {
-        projectEditor.show(EditorMode.edit, {_id: 42, name: 'Douglas Adams'}, [1, 2, 8, 4]);
+        projectEditor.edit({_id: 42, name: 'Douglas Adams'}, [1, 2, 8, 4]);
         expect(projectEditor.allProjects).to.deep.equal([1, 2, 8, 4]);
       });
 
       it('initializes the edit model', function() {
-        projectEditor.show(EditorMode.edit, {
+        projectEditor.edit({
           _id: 42,
           name: 'Douglas Adams',
           jiraTaskId: 'LUE-001',
@@ -125,26 +125,54 @@
       });
 
       it('initializes isActive based on the status', function() {
-        projectEditor.show(EditorMode.edit, {_id: 42, status: Status.active});
+        projectEditor.edit({_id: 42, status: Status.active});
         expect(projectEditor.isActive).to.be.true;
-        projectEditor.show(EditorMode.edit, {_id: 42, status: Status.inactive});
+        projectEditor.edit({_id: 42, status: Status.inactive});
         expect(projectEditor.isActive).to.be.false;
       });
 
-      describe('title', function() {
-        it('is set properly if the mode is create', function() {
-          projectEditor.show(EditorMode.create, {}, []);
-          expect(projectEditor.title).to.equal('New Project');
-        });
-
-        it('is set properly if the mode is edit', function() {
-          projectEditor.show(EditorMode.edit, {}, []);
-          expect(projectEditor.title).to.equal('Edit Project');
-        });
+      it('sets the title', function() {
+        projectEditor.edit({}, []);
+        expect(projectEditor.title).to.equal('Edit Project');
       });
 
       it('shows the modal once it is resolved', function() {
-        projectEditor.show(EditorMode.edit, {_id: 42, name: 'Douglas Adams'}, []);
+        projectEditor.edit({_id: 42, name: 'Douglas Adams'}, []);
+        expect(mockIonicModalController.show.called).to.be.false;
+        modalDfd.resolve(mockIonicModalController);
+        $scope.$digest();
+        expect(mockIonicModalController.show.calledOnce).to.be.true;
+      });
+    });
+
+    describe('create', function() {
+      var projectEditor;
+      beforeEach(function() {
+        projectEditor = new ProjectEditor($scope);
+      });
+
+      it('sets the projects list', function() {
+        projectEditor.create([1, 2, 8, 4]);
+        expect(projectEditor.allProjects).to.deep.equal([1, 2, 8, 4]);
+      });
+
+      it('initializes the edit model', function() {
+        projectEditor.create([]);
+        expect(projectEditor.editModel.status).to.equal(Status.active);
+      });
+
+      it('initializes isActive to true', function() {
+        projectEditor.create([]);
+        expect(projectEditor.isActive).to.be.true;
+      });
+
+      it('sets the title', function() {
+        projectEditor.create([]);
+        expect(projectEditor.title).to.equal('New Project');
+      });
+
+      it('shows the modal once it is resolved', function() {
+        projectEditor.create([]);
         expect(mockIonicModalController.show.called).to.be.false;
         modalDfd.resolve(mockIonicModalController);
         $scope.$digest();
@@ -169,7 +197,7 @@
       var projectEditor;
       beforeEach(function() {
         projectEditor = new ProjectEditor($scope);
-        projectEditor.show(EditorMode.edit, project, projects);
+        projectEditor.edit(project, projects);
         modalDfd.resolve(mockIonicModalController);
         $scope.$digest();
       });
@@ -247,10 +275,9 @@
 
     describe('save new project', function() {
       it('adds the project to the list upon success', function() {
-        var project = new Project();
         var projects = [{_id: 1, name: 'Something'}, {_id: 2, name: 'Another thing'}];
         var projectEditor = new ProjectEditor($scope);
-        projectEditor.show(EditorMode.create, project, projects);
+        projectEditor.create(projects);
         modalDfd.resolve(mockIonicModalController);
         $scope.$digest();
 
