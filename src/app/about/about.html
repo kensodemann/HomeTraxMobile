@@ -1,13 +1,17 @@
 <ion-view view-title="About">
   <ion-content>
-    <h2>The information will go here</h2>
-  </ion-content>
+    <div style="margin: 18px 0;"></div>
+    <ng-include src="'app/common/templates/homeTraxLogo.html'"></ng-include>
 
-  <ion-footer-bar>
-    <div class="row">
-      <button class="col button button-default">Cancel</button>
-      <button class="col button button-positive">Save
-      </button>
-    </div>
-  </ion-footer-bar>
+    <dl class="center" style="width: 26em">
+      <dt>Version</dt>
+      <dd ng-bind="controller.version"></dd>
+      <dt>Release Date</dt>
+      <dd ng-bind="controller.releaseDate | date: 'mediumDate'"></dd>
+      <dt>Server Version</dt>
+      <dd ng-bind="controller.serverVersion"></dd>
+      <dt>Copyright</dt>
+      <dd>&copy; 2015 Kenneth W. Sodemann</dd>
+    </dl>
+  </ion-content>
 </ion-view>

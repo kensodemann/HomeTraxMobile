@@ -17,5 +17,8 @@
     });
 
   function AboutController() {
+    this.version = 'Fervent Yokel (2.0.3)';
+    this.releaseDate = '2015-12-27';
+    this.serverVersion = 'Lily (2.0.1)';
   }
 }());

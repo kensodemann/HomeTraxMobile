@@ -2,3 +2,16 @@
   text-align: center;
   font-weight: bold;
 }
+
+dt {
+  float: left;
+  clear: left;
+  width: 150px;
+  text-align: right;
+  font-weight: bold;
+}
+
+dt:after {
+  content: ":";
+  padding-right: 0.5em;
+}
