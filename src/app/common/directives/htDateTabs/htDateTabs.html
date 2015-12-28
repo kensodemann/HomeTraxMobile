@@ -1,0 +1,10 @@
+<div class="row">
+  <div class="col"
+       ng-repeat="day in controller.htDays"
+       ng-class="{selected: controller.htModel === day}"
+       ng-click="controller.htModel = day"
+       ng-show="!!day.dateString || controller.htShowTotal">
+    <div ng-bind="day.label"></div>
+    <div><strong ng-bind="day.hours | number:2"></strong></div>
+  </div>
+</div>
