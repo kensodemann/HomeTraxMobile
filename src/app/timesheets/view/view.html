@@ -1,5 +1,14 @@
 <ion-view view-title="Timesheet">
-  <ion-content>
-    <h2>The timesheet will go here</h2>
+  <ion-nav-buttons side="secondary">
+    <button class="button button-icon icon ion-ios-plus-outline" ng-click="controller.addTimer()">
+    </button>
+  </ion-nav-buttons>
+
+  <div class="bar bar-subheader bar-stable no-padding">
+    <ht-date-tabs ht-timesheet="controller.timesheet"
+                  ng-model="controller.currentDate"></ht-date-tabs>
+  </div>
+  <ion-content class="has-subheader">
+    <h2>{{controller.timesheet.endDate}}</h2>
   </ion-content>
 </ion-view>
