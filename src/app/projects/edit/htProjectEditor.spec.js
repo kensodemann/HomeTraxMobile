@@ -59,7 +59,6 @@
         };
         $scope.$digest();
         expect(controller.editModel).to.not.equal($scope.project);
-        //expect(controller.editModel).to.deep.equal($scope.project);
         expect(angular.equals(controller.editModel, $scope.project)).to.be.true;
       });
 
