@@ -3,9 +3,10 @@
 
   angular.module('homeTrax.projects.list.listProjectsController', [
     'ui.router',
+    'homeTrax.common.core.Status',
     'homeTrax.common.resources.Project',
     'homeTrax.common.services.waitSpinner',
-    'homeTrax.projects.edit.ProjectEditor'
+    'homeTrax.projects.edit.htProjectEditor'
   ]).controller('listProjectsController', ListProjectsController)
     .config(function($stateProvider) {
       $stateProvider.state('app.projects.list', {
@@ -19,28 +20,45 @@
       });
     });
 
-  function ListProjectsController($scope, Project, waitSpinner, ProjectEditor) {
+  function ListProjectsController($scope, $ionicModal, Project, waitSpinner, Status) {
     var controller = this;
 
     controller.projects = Project.query();
-    controller.editor = new ProjectEditor($scope);
 
     controller.edit = editProject;
     controller.create = createProject;
 
+    controller.currentProject = {};
+
     activate();
 
     function editProject(project) {
-      controller.editor.edit(project, controller.projects);
+      controller.currentProject = project;
+      controller.projectEditor.show();
     }
 
     function createProject() {
-      controller.editor.create(controller.projects);
+      controller.currentProject = new Project({
+        status: Status.active
+      });
+      controller.projectEditor.show();
     }
 
     function activate() {
       waitSpinner.show();
       controller.projects.$promise.finally(waitSpinner.hide);
+
+      var template =
+        '<ion-modal-view><ht-project-editor ht-close="controller.projectEditor.hide()" ng-model="controller.currentProject"></ht-project-editor></ion-modal-view>';
+      controller.projectEditor = $ionicModal.fromTemplate(template, {
+        scope: $scope,
+        backdropClickToClose: false,
+        hardwareBackButtonClose: false
+      });
+
+      $scope.$on('$destroy', function() {
+        controller.projectEditor.remove();
+      });
     }
   }
 }());

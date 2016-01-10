@@ -3,12 +3,15 @@
   'use strict';
 
   describe('homeTrax.projects.list.listProjectsController', function() {
+    var mockIonicModal;
+    var mockModalController;
     var mockProjectEditor;
     var mockProjectEditorConstructor;
     var mockWaitSpinner;
 
     var config;
     var $scope;
+    var Status;
     var testData;
 
     var $controllerConstructor;
@@ -20,11 +23,12 @@
       initializeTestData();
     });
 
-    beforeEach(inject(function($rootScope, $controller, _$httpBackend_, _config_) {
+    beforeEach(inject(function($rootScope, $controller, _$httpBackend_, _config_, _Status_) {
       $controllerConstructor = $controller;
       $httpBackend = _$httpBackend_;
       config = _config_;
       $scope = $rootScope.$new();
+      Status = _Status_;
     }));
 
     beforeEach(function() {
@@ -49,6 +53,24 @@
       });
     });
 
+    beforeEach(function() {
+      mockModalController = sinon.stub({
+        show: function() {
+        },
+
+        remove: function() {
+        }
+      });
+    });
+
+    beforeEach(function() {
+      mockIonicModal = sinon.stub({
+        fromTemplate: function() {
+        }
+      });
+      mockIonicModal.fromTemplate.returns(mockModalController);
+    });
+
     afterEach(function() {
       $httpBackend.verifyNoOutstandingExpectation();
       $httpBackend.verifyNoOutstandingRequest();
@@ -58,7 +80,8 @@
       return $controllerConstructor('listProjectsController', {
         $scope: $scope,
         ProjectEditor: mockProjectEditorConstructor,
-        waitSpinner: mockWaitSpinner
+        waitSpinner: mockWaitSpinner,
+        $ionicModal: mockIonicModal
       });
     }
 
@@ -102,34 +125,61 @@
         expect(mockWaitSpinner.hide.calledOnce).to.be.true;
       });
 
-      it('builds a project editors object', function() {
-        $httpBackend.expectGET(config.dataService + '/projects').respond();
+      it('creates the projectEditor', function() {
+        $httpBackend.expectGET(config.dataService + '/projects').respond(400);
         var controller = createController();
         $httpBackend.flush();
-        expect(mockProjectEditorConstructor.calledOnce).to.be.true;
-        expect(controller.editor).to.equal(mockProjectEditor);
+        expect(mockIonicModal.fromTemplate.calledOnce).to.be.true;
+        expect(controller.projectEditor).to.equal(mockModalController);
       });
     });
 
     describe('editing a project', function() {
-      it('passes the project to the editor', function() {
+      var controller;
+      beforeEach(function() {
         $httpBackend.expectGET(config.dataService + '/projects').respond(200, testData);
-        var controller = createController();
+        controller = createController();
         $httpBackend.flush();
+      });
+
+      it('sets the current project', function() {
         controller.edit(controller.projects[1]);
-        expect(mockProjectEditor.edit.calledOnce).to.be.true;
-        expect(mockProjectEditor.edit.calledWith(controller.projects[1], controller.projects)).to.be.true;
+        expect(controller.currentProject).to.equal(controller.projects[1]);
+      });
+
+      it('shows the editor', function() {
+        controller.edit(controller.projects[1]);
+        expect(mockModalController.show.calledOnce).to.be.true;
       });
     });
 
     describe('creating a project', function() {
-      it('opens the editor for create', function() {
+      var controller;
+      beforeEach(function() {
         $httpBackend.expectGET(config.dataService + '/projects').respond(200, testData);
-        var controller = createController();
+        controller = createController();
         $httpBackend.flush();
+      });
+
+      it('sets the current project to a new active project', function() {
         controller.create();
-        expect(mockProjectEditor.create.calledOnce).to.be.true;
-        expect(mockProjectEditor.create.calledWith(controller.projects)).to.be.true;
+        expect(angular.equals(controller.currentProject, {status: Status.active})).to.be.true;
+      });
+
+      it('shows the editor', function() {
+        controller.create();
+        expect(mockModalController.show.calledOnce).to.be.true;
+      });
+    });
+
+    describe('on destroy', function() {
+      it('removes the modal', function() {
+        $httpBackend.expectGET(config.dataService + '/projects').respond(200, testData);
+        createController();
+        $httpBackend.flush();
+        $scope.$broadcast('$destroy');
+        $scope.$digest();
+        expect(mockModalController.remove.calledOnce).to.be.true;
       });
     });
 
