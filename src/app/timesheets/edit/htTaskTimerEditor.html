@@ -4,26 +4,28 @@
   </ion-header-bar>
   <ion-content>
     <ion-list>
-      <ion-input class="item item-input item-select" ng-class="{'ion-input-error': taskTimerEditor.project.$invalid}">
-        <ion-label>Project</ion-label>
-        <select name="project" ng-model="controller.editModel.project" ng-options="prj as prj.name for prj in controller.projects"
-                required>
-          <option value="">--Select a Project--</option>
-        </select>
+      <ion-input class="item item-input"
+                 ng-class="{'ion-input-error': taskTimerEditor.project.$invalid}"
+                 ng-click="controller.projectFinderDialog.show()">
+        <ion-label>Project:</ion-label>
+        <span ng-bind="controller.editModel.project.name"></span>
+        <input type="hidden" name="project" ng-model="controller.editModel.project" required/>
         <div ng-messages="taskTimerEditor.project.$error" role="alert">
           <div ng-messages-include="app/common/templates/errorMessages.html"></div>
         </div>
       </ion-input>
-      <ion-input class="item item-input item-select" ng-class="{'ion-input-error': taskTimerEditor.stage.$invalid}">
-        <ion-label>Stage</ion-label>
-        <select name="stage" ng-model="controller.editModel.stage" ng-options="stage as stage.name for stage in controller.stages"
-                required>
-          <option value="">--Select a Stage--</option>
-        </select>
+
+      <ion-input class="item item-input"
+                 ng-class="{'ion-input-error': taskTimerEditor.stage.$invalid}"
+                 ng-click="controller.stageFinderDialog.show()">
+        <ion-label>Stage:</ion-label>
+        <span ng-bind="controller.editModel.stage.name"></span>
+        <input type="hidden" name="stage" ng-model="controller.editModel.stage" required/>
         <div ng-messages="taskTimerEditor.stage.$error" role="alert">
           <div ng-messages-include="app/common/templates/errorMessages.html"></div>
         </div>
       </ion-input>
+
       <ion-input class="item item-input">
         <ion-label>Hours</ion-label>
         <input type="text" placeholder="Valid Formats: 0:00 or 0.0" ng-model="controller.timeSpent">

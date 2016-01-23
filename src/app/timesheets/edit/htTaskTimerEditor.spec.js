@@ -8,6 +8,9 @@
     var $httpBackend;
     var $scope;
 
+    var mockIonicModal;
+    var mockProjectFinder;
+    var mockStageFinder;
     var mockTimesheetTaskTimers;
     var mockWaitSpinner;
 
@@ -39,9 +42,39 @@
     });
 
     beforeEach(function() {
+      mockProjectFinder = sinon.stub({
+        show: function() {
+        },
+
+        remove: function() {
+        }
+      });
+    });
+
+    beforeEach(function() {
+      mockStageFinder = sinon.stub({
+        show: function() {
+        },
+
+        remove: function() {
+        }
+      });
+    });
+
+    beforeEach(function() {
+      mockIonicModal = sinon.stub({
+        fromTemplate: function() {
+        }
+      });
+      mockIonicModal.fromTemplate.onFirstCall().returns(mockProjectFinder);
+      mockIonicModal.fromTemplate.onSecondCall().returns(mockStageFinder);
+    });
+
+    beforeEach(function() {
       module(function($provide) {
         $provide.value('timesheetTaskTimers', mockTimesheetTaskTimers);
         $provide.value('waitSpinner', mockWaitSpinner);
+        $provide.value('$ionicModal', mockIonicModal);
       });
     });
 
@@ -102,6 +135,32 @@
         var controller = el.isolateScope().controller;
         expect(controller.title).to.equal('New Timer');
         $httpBackend.flush();
+      });
+    });
+
+    describe('finder dialogs', function() {
+      var controller;
+      beforeEach(function() {
+        $scope.taskTimer = {};
+        var el = compile('<ht-task-timer-editor ng-model="taskTimer"></ht-task-timer-editor>');
+        controller = el.isolateScope().controller;
+        $httpBackend.flush();
+      });
+
+      it('are loaded on activation', function() {
+        expect(mockIonicModal.fromTemplate.calledTwice).to.be.true;
+      });
+
+      it('are assigned on the controller', function() {
+        expect(controller.projectFinderDialog).to.equal(mockProjectFinder);
+        expect(controller.stageFinderDialog).to.equal(mockStageFinder);
+      });
+
+      it('are removed when this controllr is destroyed', function() {
+        $scope.$broadcast('$destroy');
+        $scope.$digest();
+        expect(mockProjectFinder.remove.calledOnce).to.be.true;
+        expect(mockStageFinder.remove.calledOnce).to.be.true;
       });
     });
 

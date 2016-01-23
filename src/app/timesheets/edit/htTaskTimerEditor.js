@@ -4,6 +4,7 @@
   angular.module('homeTrax.timesheets.edit.htTaskTimerEditor', [
     'homeTrax.common.core.EditorMode',
     'homeTrax.common.core.Status',
+    'homeTrax.common.directives.htItemFinderDialog',
     'homeTrax.common.filters.projectName',
     'homeTrax.common.resources.Project',
     'homeTrax.common.resources.TaskTimer',
@@ -29,8 +30,8 @@
     };
   }
 
-  function HtTaskTimerEditorController($scope, Project, TaskTimer, stages, timesheetTaskTimers, waitSpinner,
-                                       EditorMode, Status) {
+  function HtTaskTimerEditorController($scope, $ionicModal, Project, TaskTimer, stages, timesheetTaskTimers,
+                                       waitSpinner, EditorMode, Status) {
     var controller = this;
 
     controller.editModel = new TaskTimer();
@@ -63,8 +64,38 @@
     }
 
     function activate() {
+      initializeFinderDialogs();
       $scope.$on('modal.shown', fetchProjects);
       $scope.$watchCollection('controller.htTaskTimer', initializeEditor);
+    }
+
+    function initializeFinderDialogs() {
+      initializeProjectFinder();
+      initializeStageFinder();
+    }
+
+    function initializeProjectFinder() {
+      var template = '<ht-item-finder-dialog ht-close="controller.projectFinderDialog.hide()" ng-model="controller.editModel.project" ht-items="controller.projects" ht-title="Find Project"></ht-item-finder-dialog>';
+      controller.projectFinderDialog = $ionicModal.fromTemplate(wrapModal(template), {
+        scope: $scope,
+        backdropClickToClose: false,
+        hardwareBackButtonClose: false
+      });
+      $scope.$on('$destroy', controller.projectFinderDialog.remove);
+    }
+
+    function initializeStageFinder() {
+      var template = '<ht-item-finder-dialog ht-close="controller.stageFinderDialog.hide()" ng-model="controller.editModel.stage" ht-items="controller.stages" ht-title="Find Stage"></ht-item-finder-dialog>';
+      controller.stageFinderDialog = $ionicModal.fromTemplate(wrapModal(template), {
+        scope: $scope,
+        backdropClickToClose: false,
+        hardwareBackButtonClose: false
+      });
+      $scope.$on('$destroy', controller.stageFinderDialog.remove);
+    }
+
+    function wrapModal(template){
+      return '<ion-modal-view>' + template + '</ion-modal-view>';
     }
 
     function fetchProjects() {
