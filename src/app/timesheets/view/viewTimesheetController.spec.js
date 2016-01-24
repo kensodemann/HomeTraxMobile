@@ -15,6 +15,7 @@
     var clock;
     var getDfd;
     var loadDfd;
+    var testTaskTimers;
     var testTimesheet;
 
     beforeEach(module('homeTrax.timesheets.view.viewTimesheetController'));
@@ -72,6 +73,21 @@
     beforeEach(function() {
       mockTimesheetTaskTimers = sinon.stub({
         load: function() {
+        },
+
+        get: function() {
+        },
+
+        totalTime: function() {
+        },
+
+        create: function() {
+        },
+
+        start: function() {
+        },
+
+        stop: function() {
         }
       });
       mockTimesheetTaskTimers.load.returns(loadDfd.promise);
@@ -82,13 +98,15 @@
     });
 
     function createController() {
-      return $controllerConstructor('viewTimesheetController', {
+      var controller = $controllerConstructor('viewTimesheetController', {
         $scope: $scope,
         $stateParams: mockStateParams,
         $ionicModal: mockIonicModal,
         timesheets: mockTimesheets,
         timesheetTaskTimers: mockTimesheetTaskTimers
       });
+      $scope.controller = controller;
+      return controller;
     }
 
     it('exists', function() {
@@ -149,6 +167,69 @@
           expect(mockTimesheetTaskTimers.load.calledOnce).to.be.true;
           expect(mockTimesheetTaskTimers.load.calledWith(testTimesheet)).to.be.true;
         });
+
+        describe('after load of task timers', function() {
+          var controller;
+          beforeEach(function() {
+            var dt = new Date('2015-12-31');
+            clock.tick(dt.getTime());
+            controller = createController();
+            getDfd.resolve(testTimesheet);
+            $scope.$digest();
+          });
+
+          it('gets the task timers for the current day', function() {
+            mockTimesheetTaskTimers.get.returns(testTaskTimers);
+            loadDfd.resolve();
+            $scope.$digest();
+            expect(mockTimesheetTaskTimers.get.calledOnce).to.be.true;
+            expect(mockTimesheetTaskTimers.get.calledWith('2015-12-31')).to.be.true;
+            expect(controller.taskTimers).to.equal(testTaskTimers);
+          });
+
+          it('recalculates the totals for the current day', function() {
+            mockTimesheetTaskTimers.totalTime.returns(124159);
+            loadDfd.resolve();
+            $scope.$digest();
+            expect(mockTimesheetTaskTimers.totalTime.calledOnce).to.be.true;
+            expect(mockTimesheetTaskTimers.totalTime.calledWith('2015-12-31')).to.be.true;
+            expect(controller.totalTime).to.equal(124159);
+          });
+        });
+      });
+    });
+
+    describe('selecting a new date', function() {
+      var controller;
+      beforeEach(function() {
+        var dt = new Date('2015-12-31');
+        clock.tick(dt.getTime());
+        controller = createController();
+        getDfd.resolve(testTimesheet);
+        $scope.$digest();
+        mockTimesheetTaskTimers.get.reset();
+        mockTimesheetTaskTimers.totalTime.reset();
+      });
+
+      it('gets the task timers for the new date', function() {
+        controller.currentDate = '2015-12-30';
+        $scope.$digest();
+        expect(mockTimesheetTaskTimers.get.called).to.be.true;
+        expect(mockTimesheetTaskTimers.get.calledWith('2015-12-30')).to.be.true;
+      });
+
+      it('recalculates the total time for the new date', function() {
+        controller.currentDate = '2015-12-30';
+        $scope.$digest();
+        expect(mockTimesheetTaskTimers.totalTime.calledOnce).to.be.true;
+        expect(mockTimesheetTaskTimers.totalTime.calledWith('2015-12-30')).to.be.true;
+      });
+
+      it('does nothing if the date does not change', function() {
+        controller.currentDate = '2015-12-31';
+        $scope.$digest();
+        expect(mockTimesheetTaskTimers.get.called).to.be.false;
+        expect(mockTimesheetTaskTimers.totalTime.called).to.be.false;
       });
     });
 
@@ -201,6 +282,23 @@
         _id: 314159,
         endDate: '2016-01-02'
       };
+
+      testTaskTimers = [{
+        _id: 2,
+        name: 'Test Data #1'
+      }, {
+        _id: 3,
+        name: 'Test Data #1'
+      }, {
+        _id: 5,
+        name: 'Test Data #1'
+      }, {
+        _id: 7,
+        name: 'Test Data #1'
+      }, {
+        _id: 11,
+        name: 'Test Data #1'
+      }];
     }
   });
 }());

@@ -5,6 +5,7 @@
     'ui.router',
     'homeTrax.common.core.config',
     'homeTrax.common.directives.htDateTabs',
+    'homeTrax.common.directives.htTaskTimer',
     'homeTrax.common.resources.TaskTimer',
     'homeTrax.common.services.timesheets',
     'homeTrax.common.services.timesheetTaskTimers',
@@ -33,12 +34,21 @@
         });
     });
 
-  function ViewTimesheetController($scope, $window, $stateParams, $ionicModal, timesheets, timesheetTaskTimers,
+  function ViewTimesheetController($log, $scope, $window, $stateParams, $ionicModal, $q, timesheets, timesheetTaskTimers,
                                    TaskTimer) {
     var controller = this;
 
     controller.currentTaskTimer = new TaskTimer();
+
     controller.createTaskTimer = createTaskTimer;
+
+    controller.timerClicked = function() {
+      $log.log('A timer was clicked');
+    };
+
+    controller.timerToggled = function() {
+      $log.log('A timer was toggled');
+    };
 
     activate();
 
@@ -51,8 +61,9 @@
     }
 
     function activate() {
-      getTimesheet();
+      getTimesheet().then(refreshCurrentData);
       createTaskTimerEditor();
+      $scope.$watch('controller.currentDate', refreshOnDateChange);
     }
 
     function createTaskTimerEditor() {
@@ -62,16 +73,24 @@
         backdropClickToClose: false,
         hardwareBackButtonClose: false
       });
-      $scope.$on('$destroy', controller.taskTimerEditor.remove);
+      $scope.$on('$destroy', function() {
+        controller.taskTimerEditor.remove();
+      });
     }
 
     function getTimesheet() {
+      var dfd = $q.defer();
+
       var p = (!!$stateParams.id ? timesheets.get($stateParams.id) : timesheets.getCurrent());
-      p.then(function(ts) {
+      p.then(getTaskTimers, dfd.reject);
+
+      return dfd.promise;
+
+      function getTaskTimers(ts) {
         controller.timesheet = ts;
         controller.currentDate = defaultDate();
-        timesheetTaskTimers.load(ts);
-      });
+        timesheetTaskTimers.load(ts).then(dfd.resolve, dfd.reject);
+      }
     }
 
     function defaultDate() {
@@ -80,6 +99,17 @@
       var beginDate = (new $window.moment(controller.timesheet.endDate)).subtract(6, 'days');
       var currDate = (beginDate <= today && today <= endDate ? today : beginDate);
       return currDate.toISOString().substring(0, 10);
+    }
+
+    function refreshOnDateChange(currentDate, previousDate) {
+      if (currentDate !== previousDate) {
+        refreshCurrentData();
+      }
+    }
+
+    function refreshCurrentData() {
+      controller.taskTimers = timesheetTaskTimers.get(controller.currentDate);
+      controller.totalTime = timesheetTaskTimers.totalTime(controller.currentDate);
     }
   }
 }());

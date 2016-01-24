@@ -9,6 +9,8 @@
                   ng-model="controller.currentDate"></ht-date-tabs>
   </div>
   <ion-content class="has-subheader">
-    <h2>{{controller.timesheet.endDate}}</h2>
+    <ion-item ng-repeat="tt in controller.taskTimers">
+      <ht-task-timer ng-model="tt" ht-clicked="controller.timerClicked(tt)" ht-toggled="controller.timerToggled(tt)"></ht-task-timer>
+    </ion-item>
   </ion-content>
 </ion-view>

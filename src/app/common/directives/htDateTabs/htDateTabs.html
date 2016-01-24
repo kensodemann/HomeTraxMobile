@@ -3,7 +3,6 @@
        ng-repeat="day in controller.days"
        ng-class="{selected: controller.htModel === day.dateString}"
        ng-click="controller.htModel = day.dateString">
-    <!--<div ng-bind="day.dateString"></div>-->
     <div ng-bind="day.date | date: 'EEE'"></div>
     <div ng-bind="day.date | date: 'M/d'"></div>
   </div>
