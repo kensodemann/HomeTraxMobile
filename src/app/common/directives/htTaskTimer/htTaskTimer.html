@@ -6,7 +6,7 @@
   <div class="col-20 control-section">
     <button class="button button-default pull-right" ng-click="controller.htToggled()">
       <span class="icon-label" ng-bind="controller.htModel.elapsedTime | hoursMinutes"></span>
-      <span class="fa" ng-class="{'fa-clock-o': !controller.htTimer.isActive, 'fa-stop': controller.htTimer.isActive}"></span>
+      <span class="fa" ng-class="{'fa-clock-o': !controller.htModel.isActive, 'fa-stop-circle-o': controller.htModel.isActive}"></span>
     </button>
   </div>
 </div>

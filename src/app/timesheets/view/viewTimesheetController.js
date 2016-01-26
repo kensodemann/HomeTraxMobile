@@ -41,14 +41,8 @@
     controller.currentTaskTimer = new TaskTimer();
 
     controller.createTaskTimer = createTaskTimer;
-
-    controller.timerClicked = function() {
-      $log.log('A timer was clicked');
-    };
-
-    controller.timerToggled = function() {
-      $log.log('A timer was toggled');
-    };
+    controller.timerClicked = timerClicked;
+    controller.timerToggled = timerToggled;
 
     activate();
 
@@ -58,6 +52,16 @@
         timesheetRid: controller.timesheet._id
       }, controller.currentTaskTimer);
       controller.taskTimerEditor.show();
+    }
+
+    function timerClicked() {
+      $log.log('A timer was clicked');
+    }
+
+    function timerToggled(timer) {
+      var p = (timer.isActive ? timesheetTaskTimers.stop(timer) : timesheetTaskTimers.start(timer));
+      p.then(refreshCurrentData);
+      return p;
     }
 
     function activate() {

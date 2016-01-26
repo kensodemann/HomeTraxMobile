@@ -15,6 +15,8 @@
     var clock;
     var getDfd;
     var loadDfd;
+    var startDfd;
+    var stopDfd;
     var testTaskTimers;
     var testTimesheet;
 
@@ -28,6 +30,8 @@
       $controllerConstructor = $controller;
       getDfd = $q.defer();
       loadDfd = $q.defer();
+      startDfd = $q.defer();
+      stopDfd = $q.defer();
       $scope = $rootScope.$new();
     }));
 
@@ -91,6 +95,8 @@
         }
       });
       mockTimesheetTaskTimers.load.returns(loadDfd.promise);
+      mockTimesheetTaskTimers.start.returns(startDfd.promise);
+      mockTimesheetTaskTimers.stop.returns(stopDfd.promise);
     });
 
     afterEach(function() {
@@ -274,6 +280,103 @@
       it('shows the task timer editor', function() {
         controller.createTaskTimer();
         expect(mockTaskTimerEditor.show.calledOnce).to.be.true;
+      });
+    });
+
+    describe('toggling a timer', function() {
+      var controller;
+      beforeEach(function() {
+        var dt = new Date('2015-12-31');
+        clock.tick(dt.getTime());
+        controller = createController();
+        getDfd.resolve(testTimesheet);
+        $scope.$digest();
+        mockTimesheetTaskTimers.get.reset();
+        mockTimesheetTaskTimers.totalTime.reset();
+      });
+
+      describe('when the timer is not active', function() {
+        it('starts the timer', function() {
+          controller.timerToggled(testTaskTimers[2]);
+          expect(mockTimesheetTaskTimers.start.calledOnce).to.be.true;
+          expect(mockTimesheetTaskTimers.start.calledWith(testTaskTimers[2])).to.be.true;
+        });
+
+        it('refreshes the task timers for the current date', function() {
+          controller.timerToggled(testTaskTimers[2]);
+          expect(mockTimesheetTaskTimers.get.called).to.be.false;
+          startDfd.resolve();
+          $scope.$digest();
+          expect(mockTimesheetTaskTimers.get.calledOnce).to.be.true;
+          expect(mockTimesheetTaskTimers.get.calledWith('2015-12-31')).to.be.true;
+        });
+
+        it('refreshes the total time for the current date', function() {
+          controller.timerToggled(testTaskTimers[2]);
+          expect(mockTimesheetTaskTimers.totalTime.called).to.be.false;
+          startDfd.resolve();
+          $scope.$digest();
+          expect(mockTimesheetTaskTimers.totalTime.calledOnce).to.be.true;
+          expect(mockTimesheetTaskTimers.totalTime.calledWith('2015-12-31')).to.be.true;
+        });
+      });
+
+      describe('when the timer is not active', function() {
+        it('starts the timer', function() {
+          controller.timerToggled(testTaskTimers[2]);
+          expect(mockTimesheetTaskTimers.stop.called).to.be.false;
+          expect(mockTimesheetTaskTimers.start.calledOnce).to.be.true;
+          expect(mockTimesheetTaskTimers.start.calledWith(testTaskTimers[2])).to.be.true;
+        });
+
+        it('refreshes the task timers for the current date', function() {
+          controller.timerToggled(testTaskTimers[2]);
+          expect(mockTimesheetTaskTimers.get.called).to.be.false;
+          startDfd.resolve();
+          $scope.$digest();
+          expect(mockTimesheetTaskTimers.get.calledOnce).to.be.true;
+          expect(mockTimesheetTaskTimers.get.calledWith('2015-12-31')).to.be.true;
+        });
+
+        it('refreshes the total time for the current date', function() {
+          controller.timerToggled(testTaskTimers[2]);
+          expect(mockTimesheetTaskTimers.totalTime.called).to.be.false;
+          startDfd.resolve();
+          $scope.$digest();
+          expect(mockTimesheetTaskTimers.totalTime.calledOnce).to.be.true;
+          expect(mockTimesheetTaskTimers.totalTime.calledWith('2015-12-31')).to.be.true;
+        });
+      });
+
+      describe('when the timer is active', function() {
+        beforeEach(function() {
+          testTaskTimers[2].isActive = true;
+        });
+
+        it('stops the timer', function() {
+          controller.timerToggled(testTaskTimers[2]);
+          expect(mockTimesheetTaskTimers.start.called).to.be.false;
+          expect(mockTimesheetTaskTimers.stop.calledOnce).to.be.true;
+          expect(mockTimesheetTaskTimers.stop.calledWith(testTaskTimers[2])).to.be.true;
+        });
+
+        it('refreshes the task timers for the current date', function() {
+          controller.timerToggled(testTaskTimers[2]);
+          expect(mockTimesheetTaskTimers.get.called).to.be.false;
+          stopDfd.resolve();
+          $scope.$digest();
+          expect(mockTimesheetTaskTimers.get.calledOnce).to.be.true;
+          expect(mockTimesheetTaskTimers.get.calledWith('2015-12-31')).to.be.true;
+        });
+
+        it('refreshes the total time for the current date', function() {
+          controller.timerToggled(testTaskTimers[2]);
+          expect(mockTimesheetTaskTimers.totalTime.called).to.be.false;
+          stopDfd.resolve();
+          $scope.$digest();
+          expect(mockTimesheetTaskTimers.totalTime.calledOnce).to.be.true;
+          expect(mockTimesheetTaskTimers.totalTime.calledWith('2015-12-31')).to.be.true;
+        });
       });
     });
 
