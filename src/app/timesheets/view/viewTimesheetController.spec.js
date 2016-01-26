@@ -380,6 +380,29 @@
       });
     });
 
+    describe('clicking a timer', function() {
+      var controller;
+      beforeEach(function() {
+        var dt = new Date('2015-12-31');
+        clock.tick(dt.getTime());
+        controller = createController();
+        getDfd.resolve(testTimesheet);
+        $scope.$digest();
+        mockTimesheetTaskTimers.get.reset();
+        mockTimesheetTaskTimers.totalTime.reset();
+      });
+
+      it('sets the current task timer', function() {
+        controller.timerClicked(testTaskTimers[2]);
+        expect(controller.currentTaskTimer).to.equal(testTaskTimers[2]);
+      });
+
+      it('shows the editor', function() {
+        controller.timerClicked(testTaskTimers[2]);
+        expect(mockTaskTimerEditor.show.calledOnce).to.be.true;
+      });
+    });
+
     function initializeTestData() {
       testTimesheet = {
         _id: 314159,

@@ -16,6 +16,10 @@
     });
 
     describe('parse', function() {
+      it('returns undefined if nothing is passed', function() {
+        expect(timeUtility.parse()).to.be.undefined;
+      });
+
       describe('x.xx format', function() {
         it('returns X hours as milliseconds', function() {
           expect(timeUtility.parse('3')).to.equal(10800000);

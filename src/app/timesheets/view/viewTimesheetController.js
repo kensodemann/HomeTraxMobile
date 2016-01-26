@@ -34,11 +34,11 @@
         });
     });
 
-  function ViewTimesheetController($log, $scope, $window, $stateParams, $ionicModal, $q, timesheets, timesheetTaskTimers,
+  function ViewTimesheetController($scope, $window, $stateParams, $ionicModal, $q, timesheets, timesheetTaskTimers,
                                    TaskTimer) {
     var controller = this;
 
-    controller.currentTaskTimer = new TaskTimer();
+    controller.currentTaskTimer = undefined;
 
     controller.createTaskTimer = createTaskTimer;
     controller.timerClicked = timerClicked;
@@ -47,6 +47,7 @@
     activate();
 
     function createTaskTimer() {
+      controller.currentTaskTimer = new TaskTimer();
       angular.copy({
         workDate: controller.currentDate,
         timesheetRid: controller.timesheet._id
@@ -54,8 +55,9 @@
       controller.taskTimerEditor.show();
     }
 
-    function timerClicked() {
-      $log.log('A timer was clicked');
+    function timerClicked(timer) {
+      controller.currentTaskTimer = timer;
+      controller.taskTimerEditor.show();
     }
 
     function timerToggled(timer) {

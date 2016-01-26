@@ -212,6 +212,20 @@
         $scope.$digest();
         expect(controller.title).to.equal('New Timer');
       });
+
+      it('sets the time spent correctly', function() {
+        $scope.taskTimer = {
+          milliseconds: 1380000,
+          status: 'active'
+        };
+        $scope.$digest();
+        expect(controller.timeSpent).to.equal('0:23');
+        $scope.taskTimer = {
+          status: 'active'
+        };
+        $scope.$digest();
+        expect(controller.timeSpent).to.be.undefined;
+      });
     });
 
     describe('saving an existing task timer', function() {
@@ -244,6 +258,36 @@
           name: 'My name is Fred',
           timesheetRid: 3,
           project: testProjects[3]
+        }).respond();
+        controller.save();
+        $httpBackend.flush();
+      });
+
+      it('converts hours and minutes properly', function() {
+        controller.editModel.project = testProjects[3];
+        controller.editModel.name = 'My name is Fred';
+        controller.timeSpent = '1:23';
+        $httpBackend.expectPOST(config.dataService + '/timesheets/3/taskTimers/42378', {
+          _id: 42378,
+          name: 'My name is Fred',
+          timesheetRid: 3,
+          project: testProjects[3],
+          milliseconds: 4980000
+        }).respond();
+        controller.save();
+        $httpBackend.flush();
+      });
+
+      it('converts hours and decimal fracion of hours properly', function() {
+        controller.editModel.project = testProjects[3];
+        controller.editModel.name = 'My name is Fred';
+        controller.timeSpent = '1.23';
+        $httpBackend.expectPOST(config.dataService + '/timesheets/3/taskTimers/42378', {
+          _id: 42378,
+          name: 'My name is Fred',
+          timesheetRid: 3,
+          project: testProjects[3],
+          milliseconds: 4428000
         }).respond();
         controller.save();
         $httpBackend.flush();

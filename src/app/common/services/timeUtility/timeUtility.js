@@ -11,6 +11,10 @@
     };
 
     function parse(t) {
+      if (!t) {
+        return undefined;
+      }
+
       var n = t;
       if (typeof t === 'string') {
         if (isNumberOfHours(t)) {

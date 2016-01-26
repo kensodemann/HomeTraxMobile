@@ -5,11 +5,13 @@
     'homeTrax.common.core.EditorMode',
     'homeTrax.common.core.Status',
     'homeTrax.common.directives.htItemFinderDialog',
+    'homeTrax.common.filters.hoursMinutes',
     'homeTrax.common.filters.projectName',
     'homeTrax.common.resources.Project',
     'homeTrax.common.resources.TaskTimer',
     'homeTrax.common.services.stages',
     'homeTrax.common.services.timesheetTaskTimers',
+    'homeTrax.common.services.timeUtility',
     'homeTrax.common.services.waitSpinner'
   ]).directive('htTaskTimerEditor', htTaskTimerEditor)
     .controller('htTaskTimerEditorController', HtTaskTimerEditorController);
@@ -31,7 +33,7 @@
   }
 
   function HtTaskTimerEditorController($scope, $ionicModal, Project, TaskTimer, stages, timesheetTaskTimers,
-                                       waitSpinner, EditorMode, Status) {
+                                       waitSpinner, EditorMode, Status, hoursMinutesFilter, timeUtility) {
     var controller = this;
 
     controller.editModel = new TaskTimer();
@@ -42,6 +44,7 @@
     activate();
 
     function saveModel() {
+      controller.editModel.milliseconds = timeUtility.parse(controller.timeSpent);
       waitSpinner.show();
       controller.editModel.$save()
         .finally(waitSpinner.hide)
@@ -50,7 +53,7 @@
       function copyAndClose(res) {
         angular.copy(res, controller.htTaskTimer);
         if (controller.mode === EditorMode.create) {
-          timesheetTaskTimers.add(res);
+          timesheetTaskTimers.add(controller.htTaskTimer);
         }
 
         controller.htClose();
@@ -94,7 +97,7 @@
       $scope.$on('$destroy', controller.stageFinderDialog.remove);
     }
 
-    function wrapModal(template){
+    function wrapModal(template) {
       return '<ion-modal-view>' + template + '</ion-modal-view>';
     }
 
@@ -111,6 +114,7 @@
 
     function setEditModel() {
       controller.mode = (controller.htTaskTimer._id ? EditorMode.edit : EditorMode.create);
+      controller.timeSpent = (controller.htTaskTimer.milliseconds ? hoursMinutesFilter(controller.htTaskTimer.milliseconds) : undefined);
       angular.copy(controller.htTaskTimer, controller.editModel);
       if (controller.editModel.stage) {
         controller.stages.$promise.then(function() {
