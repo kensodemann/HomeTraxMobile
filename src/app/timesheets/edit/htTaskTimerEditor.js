@@ -25,7 +25,7 @@
         htTaskTimer: '=ngModel',
         htModel: '=',
         htTaskTimers: '=',
-        htClose: '&'
+        htDialog: '='
       },
       controller: 'htTaskTimerEditorController',
       controllerAs: 'controller'
@@ -38,6 +38,7 @@
 
     controller.editModel = new TaskTimer();
 
+    controller.projects = [];
     controller.stages = stages.all;
     controller.save = saveModel;
 
@@ -56,7 +57,7 @@
           timesheetTaskTimers.add(controller.htTaskTimer);
         }
 
-        controller.htClose();
+        controller.htDialog.hide();
       }
 
       function showErrorMessage(res) {
@@ -68,8 +69,7 @@
 
     function activate() {
       initializeFinderDialogs();
-      $scope.$on('modal.shown', fetchProjects);
-      $scope.$watchCollection('controller.htTaskTimer', initializeEditor);
+      $scope.$on('modal.shown', resetData);
     }
 
     function initializeFinderDialogs() {
@@ -78,7 +78,7 @@
     }
 
     function initializeProjectFinder() {
-      var template = '<ht-item-finder-dialog ht-close="controller.projectFinderDialog.hide()" ng-model="controller.editModel.project" ht-items="controller.projects" ht-title="Find Project"></ht-item-finder-dialog>';
+      var template = '<ht-item-finder-dialog ht-dialog="controller.projectFinderDialog" ng-model="controller.editModel.project" ht-items="controller.projects" ht-title="Find Project"></ht-item-finder-dialog>';
       controller.projectFinderDialog = $ionicModal.fromTemplate(wrapModal(template), {
         scope: $scope,
         backdropClickToClose: false,
@@ -88,7 +88,7 @@
     }
 
     function initializeStageFinder() {
-      var template = '<ht-item-finder-dialog ht-close="controller.stageFinderDialog.hide()" ng-model="controller.editModel.stage" ht-items="controller.stages" ht-title="Find Stage"></ht-item-finder-dialog>';
+      var template = '<ht-item-finder-dialog ht-dialog="controller.stageFinderDialog" ng-model="controller.editModel.stage" ht-items="controller.stages" ht-title="Find Stage"></ht-item-finder-dialog>';
       controller.stageFinderDialog = $ionicModal.fromTemplate(wrapModal(template), {
         scope: $scope,
         backdropClickToClose: false,
@@ -99,6 +99,13 @@
 
     function wrapModal(template) {
       return '<ion-modal-view>' + template + '</ion-modal-view>';
+    }
+
+    function resetData(evt, dialog) {
+      if (dialog === controller.htDialog) {
+        fetchProjects();
+        initializeEditor();
+      }
     }
 
     function fetchProjects() {

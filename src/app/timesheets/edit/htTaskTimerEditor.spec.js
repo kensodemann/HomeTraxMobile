@@ -100,44 +100,6 @@
       $httpBackend.flush();
     });
 
-    describe('instantiation', function() {
-      it('sets the edit model', function() {
-        $scope.taskTimer = {
-          _id: '24',
-          name: 'I am a fake task',
-          stage: {
-            _id: '82',
-            stageNumber: 3,
-            name: 'Stage 3'
-          }
-        };
-        var el = compile('<ht-task-timer-editor ng-model="taskTimer"></ht-task-timer-editor>');
-        var controller = el.isolateScope().controller;
-        expect(controller.editModel).to.not.equal($scope.taskTimer);
-        expect(angular.equals(controller.editModel, $scope.taskTimer)).to.be.true;
-        $httpBackend.flush();
-      });
-
-      it('sets the title to "Modify Timer" if the model has an _id', function() {
-        $scope.taskTimer = {
-          _id: '24',
-          name: 'I am a fake task'
-        };
-        var el = compile('<ht-task-timer-editor ng-model="taskTimer"></ht-task-timer-editor>');
-        var controller = el.isolateScope().controller;
-        expect(controller.title).to.equal('Modify Timer');
-        $httpBackend.flush();
-      });
-
-      it('sets the title to "New Timer" if the model does not have an _id', function() {
-        $scope.taskTimer = {};
-        var el = compile('<ht-task-timer-editor ng-model="taskTimer"></ht-task-timer-editor>');
-        var controller = el.isolateScope().controller;
-        expect(controller.title).to.equal('New Timer');
-        $httpBackend.flush();
-      });
-    });
-
     describe('finder dialogs', function() {
       var controller;
       beforeEach(function() {
@@ -165,66 +127,78 @@
     });
 
     describe('when shown', function() {
-      it('fetches the active projects and assigns them to the controller project list', function() {
-        var el = compile('<ht-task-timer-editor></ht-task-timer-editor>');
-        var controller = el.isolateScope().controller;
-        $httpBackend.expectGET(config.dataService + '/projects?status=active').respond(200, testProjects);
-        $scope.$broadcast('modal.shown');
-        $scope.$digest();
-        $httpBackend.flush();
-        expect(angular.equals(controller.projects, testProjects)).to.be.true;
-      });
-    });
-
-
-    describe('changing the htTaskTimer model', function() {
       var controller;
       beforeEach(function() {
-        $scope.taskTimer = {};
-        var el = compile('<ht-task-timer-editor ng-model="taskTimer"></ht-task-timer-editor>');
+        $scope.taskTimer = {
+          _id: '24',
+          name: 'I am a fake task',
+          milliseconds: 1380000,
+          status: 'active'
+        };
+        $scope.dialog = {};
+        var el = compile('<ht-task-timer-editor ht-dialog="dialog" ng-model="taskTimer"></ht-task-timer-editor>');
         controller = el.isolateScope().controller;
         $httpBackend.flush();
       });
 
-      it('copies the timer to the editor model', function() {
-        $scope.taskTimer = {
-          _id: '24',
-          name: 'I am a fake task'
-        };
-        $scope.$digest();
-        expect(controller.editModel).to.not.equal($scope.taskTimer);
-        expect(angular.equals(controller.editModel, $scope.taskTimer)).to.be.true;
+      describe('this dialog', function() {
+        beforeEach(function() {
+          $httpBackend.expectGET(config.dataService + '/projects?status=active').respond(200, testProjects);
+        });
+
+        it('fetches the active projects and assigns them to the controller project list', function() {
+          $scope.$broadcast('modal.shown', $scope.dialog);
+          $httpBackend.flush();
+          expect(angular.equals(controller.projects, testProjects)).to.be.true;
+        });
+
+        it('copies the timer to the editor model', function() {
+          $scope.$broadcast('modal.shown', $scope.dialog);
+          $httpBackend.flush();
+          expect(controller.editModel).to.not.equal($scope.taskTimer);
+          expect(angular.equals(controller.editModel, $scope.taskTimer)).to.be.true;
+        });
+
+        it('sets the title to "Modify Timer" if the model has an _id', function() {
+          $scope.$broadcast('modal.shown', $scope.dialog);
+          $httpBackend.flush();
+          expect(controller.title).to.equal('Modify Timer');
+        });
+
+        it('sets the title to "New Timer" if the model does not have an _id', function() {
+          $scope.taskTimer = {
+            status: 'active'
+          };
+          $scope.$digest();
+          $scope.$broadcast('modal.shown', $scope.dialog);
+          $httpBackend.flush();
+          expect(controller.title).to.equal('New Timer');
+        });
+
+        it('sets the time spent correctly', function() {
+          $scope.$broadcast('modal.shown', $scope.dialog);
+          $httpBackend.flush();
+          expect(controller.timeSpent).to.equal('0:23');
+        });
+
+        it('does not set the time spent if there is no time spent', function() {
+          $scope.taskTimer = {
+            status: 'active'
+          };
+          $scope.$digest();
+          $scope.$broadcast('modal.shown', $scope.dialog);
+          $httpBackend.flush();
+          expect(controller.timeSpent).to.be.undefined;
+        });
       });
 
-      it('sets the title to "Modify Timer" if the model has an _id', function() {
-        $scope.taskTimer = {
-          _id: '24',
-          name: 'I am a fake task'
-        };
-        $scope.$digest();
-        expect(controller.title).to.equal('Modify Timer');
-      });
-
-      it('sets the title to "New Timer" if the model does not have an _id', function() {
-        $scope.taskTimer = {
-          status: 'active'
-        };
-        $scope.$digest();
-        expect(controller.title).to.equal('New Timer');
-      });
-
-      it('sets the time spent correctly', function() {
-        $scope.taskTimer = {
-          milliseconds: 1380000,
-          status: 'active'
-        };
-        $scope.$digest();
-        expect(controller.timeSpent).to.equal('0:23');
-        $scope.taskTimer = {
-          status: 'active'
-        };
-        $scope.$digest();
-        expect(controller.timeSpent).to.be.undefined;
+      describe('some other dialog', function() {
+        it('does not fetch projects or initialize the editor', function() {
+          $scope.$broadcast('modal.shown', {});
+          $scope.$digest();
+          expect(controller.projects).to.deep.equal([]);
+          expect(angular.equals(controller.editModel, {})).to.be.true;
+        });
       });
     });
 
@@ -237,8 +211,13 @@
           timesheetRid: 3,
           project: testProjects[1]
         };
-        var el = compile('<ht-task-timer-editor ng-model="taskTimer"></ht-task-timer-editor>');
+        $scope.dialog = {
+          hide: sinon.stub()
+        };
+        var el = compile('<ht-task-timer-editor ht-dialog="dialog" ng-model="taskTimer"></ht-task-timer-editor>');
         controller = el.isolateScope().controller;
+        $httpBackend.expectGET(config.dataService + '/projects?status=active').respond(200, testProjects);
+        $scope.$broadcast('modal.shown', $scope.dialog);
         $httpBackend.flush();
       });
 
@@ -323,6 +302,10 @@
         it('does not add the item to the list', function() {
           expect(mockTimesheetTaskTimers.add.calledOnce).to.be.false;
         });
+
+        it('hides the dialog', function() {
+          expect($scope.dialog.hide.calledOnce).to.be.true;
+        });
       });
 
       describe('on failure', function() {
@@ -341,6 +324,10 @@
         it('displays an error message', function() {
           expect(controller.errorMessage).to.equal('Because I just do not want to');
         });
+
+        it('does not hide the dialog', function() {
+          expect($scope.dialog.hide.called).to.be.false;
+        });
       });
     });
 
@@ -350,8 +337,13 @@
         $scope.taskTimer = {
           timesheetRid: 78
         };
-        var el = compile('<ht-task-timer-editor ng-model="taskTimer"></ht-task-timer-editor>');
+        $scope.dialog = {
+          hide: sinon.stub()
+        };
+        var el = compile('<ht-task-timer-editor ht-dialog="dialog" ng-model="taskTimer"></ht-task-timer-editor>');
         controller = el.isolateScope().controller;
+        $httpBackend.expectGET(config.dataService + '/projects?status=active').respond(200, testProjects);
+        $scope.$broadcast('modal.shown', $scope.dialog);
         $httpBackend.flush();
       });
 
@@ -404,7 +396,7 @@
           })).to.be.true;
         });
 
-        it('addss the task timer to the list', function() {
+        it('adds the task timer to the list', function() {
           expect(mockTimesheetTaskTimers.add.calledOnce).to.be.true;
           expect(angular.equals(mockTimesheetTaskTimers.add.firstCall.args[0], {
             _id: 188375,
@@ -412,6 +404,10 @@
             timesheetRid: 78,
             project: testProjects[3]
           })).to.be.true;
+        });
+
+        it('hides the dialog', function() {
+          expect($scope.dialog.hide.calledOnce).to.be.true;
         });
       });
 
@@ -430,6 +426,10 @@
 
         it('displays an error message', function() {
           expect(controller.errorMessage).to.equal('Because I just do not want to');
+        });
+
+        it('does not hide the dialog', function() {
+          expect($scope.dialog.hide.called).to.be.false;
         });
       });
     });

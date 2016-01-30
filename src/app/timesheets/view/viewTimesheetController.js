@@ -73,7 +73,7 @@
     }
 
     function createTaskTimerEditor() {
-      var template = '<ion-modal-view><ht-task-timer-editor ht-close="controller.taskTimerEditor.hide()" ng-model="controller.currentTaskTimer"></ht-task-timer-editor></ion-modal-view>';
+      var template = '<ion-modal-view><ht-task-timer-editor ht-dialog="controller.taskTimerEditor" ng-model="controller.currentTaskTimer"></ht-task-timer-editor></ion-modal-view>';
       controller.taskTimerEditor = $ionicModal.fromTemplate(template, {
         scope: $scope,
         backdropClickToClose: false,

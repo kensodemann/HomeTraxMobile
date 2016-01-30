@@ -22,22 +22,24 @@
 
     describe('closing the dialog', function() {
       beforeEach(function() {
-        $scope.closeDialog = sinon.stub();
+        $scope.dialog = {
+          hide: sinon.stub()
+        };
       });
 
       it('occurs when the model goes from nothing to something', function() {
-        compile('<ht-item-finder-dialog ng-model="model" ht-close="closeDialog()"></ht-item-finder-dialog>');
+        compile('<ht-item-finder-dialog ng-model="model" ht-dialog="dialog"></ht-item-finder-dialog>');
         $scope.model = {};
         $scope.$digest();
-        expect($scope.closeDialog.calledOnce).to.be.true;
+        expect($scope.dialog.hide.calledOnce).to.be.true;
       });
 
       it('occurs when the model goes from one thing to another', function() {
         $scope.model = {name: 'Bill'};
-        compile('<ht-item-finder-dialog ng-model="model" ht-close="closeDialog()"></ht-item-finder-dialog>');
+        compile('<ht-item-finder-dialog ng-model="model" ht-dialog="dialog"></ht-item-finder-dialog>');
         $scope.model = {name: 'Ted'};
         $scope.$digest();
-        expect($scope.closeDialog.calledOnce).to.be.true;
+        expect($scope.dialog.hide.calledOnce).to.be.true;
       });
     });
 

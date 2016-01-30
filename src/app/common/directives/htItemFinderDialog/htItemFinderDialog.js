@@ -15,7 +15,7 @@
         htItem: '=ngModel',
         htItems: '=',
         htTitle: '@',
-        htClose: '&'
+        htDialog: '='
       },
       controller: 'htItemFinderDialogController',
       controllerAs: 'controller'
@@ -30,7 +30,7 @@
     function activate() {
       $scope.$watch('controller.htItem', function(newValue, oldValue) {
         if (newValue && newValue !== oldValue) {
-          controller.htClose();
+          controller.htDialog.hide();
         }
       });
     }
