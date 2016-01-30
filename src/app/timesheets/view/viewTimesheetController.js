@@ -6,6 +6,7 @@
     'homeTrax.common.core.config',
     'homeTrax.common.directives.htDateTabs',
     'homeTrax.common.directives.htTaskTimer',
+    'homeTrax.common.filters.hoursMinutes',
     'homeTrax.common.resources.TaskTimer',
     'homeTrax.common.services.timesheets',
     'homeTrax.common.services.timesheetTaskTimers',
@@ -34,8 +35,8 @@
         });
     });
 
-  function ViewTimesheetController($scope, $window, $stateParams, $ionicModal, $q, timesheets, timesheetTaskTimers,
-                                   TaskTimer) {
+  function ViewTimesheetController($scope, $interval, $window, $stateParams, $ionicModal, $q, timesheets,
+                                   timesheetTaskTimers, TaskTimer) {
     var controller = this;
 
     controller.currentTaskTimer = undefined;
@@ -71,6 +72,7 @@
       createTaskTimerEditor();
       $scope.$watch('controller.currentDate', refreshOnDateChange);
       $scope.$on('modal.hidden', refreshOnDialogHidden);
+      $interval(refreshCurrentData, 15000);
     }
 
     function createTaskTimerEditor() {

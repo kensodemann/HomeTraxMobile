@@ -1,9 +1,9 @@
 <div class="row task-timer">
-  <div class="col description-section" ng-click="controller.htClicked()">
+  <div class="col-75 description-section" ng-click="controller.htClicked()">
     <div ng-bind="controller.htModel.project | projectName" class="project truncate"></div>
     <div ng-bind="controller.htModel.stage.name" class="stage"></div>
   </div>
-  <div class="col-20 control-section">
+  <div class="col-25 control-section">
     <button class="button button-default pull-right" ng-click="controller.htToggled()">
       <span class="icon-label" ng-bind="controller.htModel.elapsedTime | hoursMinutes"></span>
       <span class="fa" ng-class="{'fa-clock-o': !controller.htModel.isActive, 'fa-stop-circle-o': controller.htModel.isActive}"></span>

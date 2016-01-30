@@ -10,6 +10,7 @@
     var mockTimesheetTaskTimers;
 
     var $controllerConstructor;
+    var $interval;
     var $scope;
 
     var clock;
@@ -26,13 +27,14 @@
       initializeTestData();
     });
 
-    beforeEach(inject(function($controller, $q, $rootScope) {
+    beforeEach(inject(function($controller, $q, $rootScope, _$interval_) {
       $controllerConstructor = $controller;
       getDfd = $q.defer();
       loadDfd = $q.defer();
       startDfd = $q.defer();
       stopDfd = $q.defer();
       $scope = $rootScope.$new();
+      $interval = _$interval_;
     }));
 
     beforeEach(function() {
@@ -202,6 +204,13 @@
             expect(controller.totalTime).to.equal(124159);
           });
         });
+      });
+
+      it('schedules a refresh of data every 15 seconds', function() {
+        createController();
+        $interval.flush(15000);
+        expect(mockTimesheetTaskTimers.get.calledOnce).to.be.true;
+        expect(mockTimesheetTaskTimers.totalTime.calledOnce).to.be.true;
       });
     });
 

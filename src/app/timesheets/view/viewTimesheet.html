@@ -1,4 +1,4 @@
-<ion-view view-title="Timesheet">
+<ion-view class="view-timesheet" view-title="Timesheet">
   <ion-nav-buttons side="secondary">
     <button class="button button-icon icon ion-ios-plus-outline" ng-click="controller.createTaskTimer()">
     </button>
@@ -10,7 +10,18 @@
   </div>
   <ion-content class="has-subheader">
     <ion-item ng-repeat="tt in controller.taskTimers">
-      <ht-task-timer ng-model="tt" ht-clicked="controller.timerClicked(tt)" ht-toggled="controller.timerToggled(tt)"></ht-task-timer>
+      <ht-task-timer ng-model="tt" ht-clicked="controller.timerClicked(tt)"
+                     ht-toggled="controller.timerToggled(tt)"></ht-task-timer>
     </ion-item>
   </ion-content>
+  <ion-footer-bar>
+    <div class="row">
+      <div class="col">
+        <div class="total-line pull-right">
+          <span class="label">Total Time:</span>
+          <span class="static-data" ng-bind="controller.totalTime | hoursMinutes">12:45</span>
+        </div>
+      </div>
+    </div>
+  </ion-footer-bar>
 </ion-view>
