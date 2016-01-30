@@ -148,7 +148,7 @@
         });
 
         it('assigns the selected date to today if it is in the range', function() {
-          var dt = new Date('2015-12-31');
+          var dt = new Date(2015, 11, 31);
           clock.tick(dt.getTime());
           var controller = createController();
           getDfd.resolve(testTimesheet);
@@ -157,7 +157,7 @@
         });
 
         it('assigns the selected date to the first day of the timesheet if today is not in range', function() {
-          var dt = new Date('2016-01-03');
+          var dt = new Date(2016, 0, 3);
           clock.tick(dt.getTime());
           var controller = createController();
           getDfd.resolve(testTimesheet);
@@ -177,7 +177,7 @@
         describe('after load of task timers', function() {
           var controller;
           beforeEach(function() {
-            var dt = new Date('2015-12-31');
+            var dt = new Date(2015, 11, 31);
             clock.tick(dt.getTime());
             controller = createController();
             getDfd.resolve(testTimesheet);
@@ -208,7 +208,7 @@
     describe('selecting a new date', function() {
       var controller;
       beforeEach(function() {
-        var dt = new Date('2015-12-31');
+        var dt = new Date(2015, 11, 31);
         clock.tick(dt.getTime());
         controller = createController();
         getDfd.resolve(testTimesheet);
@@ -286,7 +286,7 @@
     describe('toggling a timer', function() {
       var controller;
       beforeEach(function() {
-        var dt = new Date('2015-12-31');
+        var dt = new Date(2015, 11, 31);
         clock.tick(dt.getTime());
         controller = createController();
         getDfd.resolve(testTimesheet);
@@ -383,7 +383,7 @@
     describe('clicking a timer', function() {
       var controller;
       beforeEach(function() {
-        var dt = new Date('2015-12-31');
+        var dt = new Date(2015, 11, 31);
         clock.tick(dt.getTime());
         controller = createController();
         getDfd.resolve(testTimesheet);

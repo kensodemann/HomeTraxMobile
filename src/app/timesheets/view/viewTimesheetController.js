@@ -100,11 +100,10 @@
     }
 
     function defaultDate() {
-      var today = new $window.moment();
-      var endDate = new $window.moment(controller.timesheet.endDate);
-      var beginDate = (new $window.moment(controller.timesheet.endDate)).subtract(6, 'days');
-      var currDate = (beginDate <= today && today <= endDate ? today : beginDate);
-      return currDate.toISOString().substring(0, 10);
+      var today = new $window.moment().format('YYYY-MM-DD');
+      var endDate = controller.timesheet.endDate;
+      var beginDate = (new $window.moment(controller.timesheet.endDate)).subtract(6, 'days').format('YYYY-MM-DD');
+      return (beginDate <= today && today <= endDate ? today : beginDate);
     }
 
     function refreshOnDateChange(currentDate, previousDate) {
