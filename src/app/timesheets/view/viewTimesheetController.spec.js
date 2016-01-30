@@ -220,7 +220,7 @@
       it('gets the task timers for the new date', function() {
         controller.currentDate = '2015-12-30';
         $scope.$digest();
-        expect(mockTimesheetTaskTimers.get.called).to.be.true;
+        expect(mockTimesheetTaskTimers.get.calledOnce).to.be.true;
         expect(mockTimesheetTaskTimers.get.calledWith('2015-12-30')).to.be.true;
       });
 
@@ -242,7 +242,13 @@
     describe('task timer editor', function() {
       var controller;
       beforeEach(function() {
+        var dt = new Date(2015, 11, 31);
+        clock.tick(dt.getTime());
         controller = createController();
+        getDfd.resolve(testTimesheet);
+        $scope.$digest();
+        mockTimesheetTaskTimers.get.reset();
+        mockTimesheetTaskTimers.totalTime.reset();
       });
 
       it('is loaded on activation', function() {
@@ -257,6 +263,17 @@
         $scope.$broadcast('$destroy');
         $scope.$digest();
         expect(mockTaskTimerEditor.remove.calledOnce).to.be.true;
+      });
+
+      describe('hiding', function() {
+        it('refreshes the timer list and total time for today', function() {
+          $scope.$broadcast('modal.hidden', controller.taskTimerEditor);
+          $scope.$digest();
+          expect(mockTimesheetTaskTimers.get.calledOnce).to.be.true;
+          expect(mockTimesheetTaskTimers.get.calledWith('2015-12-31')).to.be.true;
+          expect(mockTimesheetTaskTimers.totalTime.calledOnce).to.be.true;
+          expect(mockTimesheetTaskTimers.totalTime.calledWith('2015-12-31')).to.be.true;
+        });
       });
     });
 

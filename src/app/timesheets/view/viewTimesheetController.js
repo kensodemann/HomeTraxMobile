@@ -70,6 +70,7 @@
       getTimesheet().then(refreshCurrentData);
       createTaskTimerEditor();
       $scope.$watch('controller.currentDate', refreshOnDateChange);
+      $scope.$on('modal.hidden', refreshOnDialogHidden);
     }
 
     function createTaskTimerEditor() {
@@ -108,6 +109,12 @@
 
     function refreshOnDateChange(currentDate, previousDate) {
       if (currentDate !== previousDate) {
+        refreshCurrentData();
+      }
+    }
+
+    function refreshOnDialogHidden(evt, dialog) {
+      if (dialog === controller.taskTimerEditor) {
         refreshCurrentData();
       }
     }
