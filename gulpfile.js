@@ -8,6 +8,7 @@ var concat = require('gulp-concat');
 var copy = require('gulp-copy');
 var del = require('del');
 var minifyCss = require('gulp-minify-css');
+var preprocess = require('gulp-preprocess');
 var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 
@@ -37,6 +38,8 @@ var paths = {
     componentPaths.lib.moment.release,
     componentPaths.lib.underscore.release
   ],
+  main: componentPaths.src + '/main.js',
+  package: 'package.json',
   sass: [
     componentPaths.homeTraxSccs
   ],
@@ -55,6 +58,34 @@ var paths = {
     componentPaths.src + '/**/*.html'
   ]
 };
+
+function isReleaseBuild() {
+  return gutil.env.type === 'release';
+}
+
+function isElectronBuild() {
+  return gutil.env.build === 'electron';
+}
+
+function getBuildContext() {
+  var build = {
+    context: {}
+  };
+
+  if (isReleaseBuild()) {
+    build.context.RELEASE = true;
+  } else {
+    build.context.DEVELOPMENT = true;
+  }
+
+  if (isElectronBuild()) {
+    build.context.ELECTRON = true;
+  } else {
+    build.context.MOBILE = true;
+  }
+
+  return build;
+}
 
 // Quality Tasks (linting, testing, etc)
 gulp.task('deleteLintLog', function(done) {
@@ -109,9 +140,18 @@ gulp.task('copyImages', ['clean'], function() {
     .pipe(copy('./www/img', {prefix: 2}));
 });
 
+gulp.task('copyElectronFiles', ['clean'], function() {
+  if (isElectronBuild()) {
+    gulp.src(paths.main).pipe(copy('./www', {prefix: 1}));
+    gulp.src(paths.package).pipe(copy('./www'));
+  }
+});
+
 gulp.task('copyViews', ['clean'], function() {
-  gulp.src(paths.views)
-    .pipe(copy('./www', {prefix: 1}));
+  var build = getBuildContext();
+  return gulp.src(paths.views)
+    .pipe(preprocess(build))
+    .pipe(gulp.dest('./www', {prefix: 1}));
 });
 
 gulp.task('buildCss', ['clean'], function() {
@@ -125,24 +165,14 @@ gulp.task('buildCss', ['clean'], function() {
 
 gulp.task('buildJs', ['clean'], function() {
   var annotate = require('gulp-ng-annotate');
-  var preprocess = require('gulp-preprocess');
   var uglify = require('gulp-uglify');
-  var release = gutil.env.type === 'release';
-
-  var context = release ? {
-    context: {
-      RELEASE: true
-    }
-  } : {
-    context: {
-      DEVELOPMENT: true
-    }
-  };
+  var release = isReleaseBuild();
+  var build = getBuildContext();
 
   return gulp
     .src(paths.src)
     .pipe(release ? gutil.noop() : sourcemaps.init())
-    .pipe(preprocess(context))
+    .pipe(preprocess(build))
     .pipe(concat('homeTrax.js'))
     .pipe(annotate())
     .pipe(release ? gutil.noop() : sourcemaps.write())
@@ -161,7 +191,7 @@ gulp.task('buildLibs', ['clean'], function() {
 });
 
 // End user tasks
-gulp.task('default', ['lint', 'style', 'test', 'buildCss', 'buildJs', 'buildLibs', 'copyFonts', 'copyImages', 'copyViews']);
+gulp.task('default', ['lint', 'style', 'test', 'buildCss', 'buildJs', 'buildLibs', 'copyElectronFiles', 'copyFonts', 'copyImages', 'copyViews']);
 
 gulp.task('dev', ['default'], function() {
   return gulp.watch(paths.watch, ['default']);

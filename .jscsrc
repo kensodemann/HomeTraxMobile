@@ -3,6 +3,7 @@
   "excludeFiles": [
     "bower_components/**",
     "hooks/**",
+    "HomeTrax-*/**",
     "node_modules/**",
     "patches/**",
     "platforms/**",

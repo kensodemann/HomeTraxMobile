@@ -17,7 +17,9 @@
     .config(routing)
     .config(localStorage)
     .run(function($log, $ionicPlatform, $rootScope, $state, AuthenticationEvents) {
+      // @ifdef MOBILE
       initializePlatform($ionicPlatform);
+      // @endif
       logStateChangeError($rootScope, $log);
       redirectWhenNotAuthenticated($rootScope, AuthenticationEvents, $state);
     });
@@ -43,6 +45,7 @@
     localStorageServiceProvider.setPrefix('HomeTrax');
   }
 
+  // @ifdef MOBILE
   function initializePlatform($ionicPlatform) {
     $ionicPlatform.ready(function() {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
@@ -59,6 +62,7 @@
       }
     });
   }
+  // @endif
 
   function logStateChangeError($rootScope, $log) {
     $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
