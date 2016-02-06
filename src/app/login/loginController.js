@@ -36,7 +36,7 @@
         if (success) {
           $ionicHistory.clearHistory();
           $ionicHistory.clearCache().then(function(){
-            $state.go('app.timesheets.view');
+            $state.go('app.timesheets.viewCurrent');
           });
         }
         else {
