@@ -53,6 +53,6 @@
   ],
   "scripts": {
     "start": "node server.js",
-    "electron": "./node_modules/.bin/electron-packager www/ HomeTrax --platform=darwin --arch=x64 --version=0.36.7 --icon=resources/icon.icns --overwrite"
+    "packageOSX": "./node_modules/.bin/electron-packager www/ HomeTrax --platform=darwin --arch=x64 --version=0.36.7 --icon=resources/icon.icns --overwrite"
   }
 }
