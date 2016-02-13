@@ -98,7 +98,7 @@
         clearDfd.resolve();
         $scope.$digest();
         expect(mockState.go.calledOnce).to.be.true;
-        expect(mockState.go.calledWith('app.timesheets.view')).to.be.true;
+        expect(mockState.go.calledWith('app.timesheets.viewCurrent')).to.be.true;
       });
 
       it('Should show an error on failure', function() {
