@@ -19,7 +19,7 @@
       bindToController: {
         htProject: '=ngModel',
         htProjects: '=',
-        htClose: '&'
+        htDialog: '='
       }
     };
   }
@@ -45,7 +45,7 @@
           controller.htProjects.push(controller.htProject);
         }
 
-        controller.htClose();
+        controller.htDialog.hide();
       }
 
       function displayError(resp) {

@@ -118,8 +118,10 @@
             status: 'active'
           }
         ];
-        $scope.myClose = sinon.stub();
-        var el = compile('<ht-project-editor ht-close="myClose" ng-model="project" ht-projects="projects"></ht-project-editor>');
+        $scope.dialog = {
+          hide: sinon.stub()
+        };
+        var el = compile('<ht-project-editor ht-dialog="dialog" ng-model="project" ht-projects="projects"></ht-project-editor>');
         controller = el.isolateScope().controller;
       });
 
@@ -170,6 +172,10 @@
         it('does not add the project to the list', function() {
           expect($scope.projects.length).to.equal(2);
         });
+
+        it('closes the dialog', function() {
+          expect($scope.dialog.hide.calledOnce).to.be.true;
+        });
       });
 
       describe('on failure', function() {
@@ -187,6 +193,10 @@
 
         it('sets an error message', function() {
           expect(controller.errorMessage).to.equal('Because you suck eggs');
+        });
+
+        it('leaves the dialog open', function() {
+          expect($scope.dialog.hide.called).to.be.false;
         });
       });
     });
@@ -208,8 +218,10 @@
           name: 'Sheldon Cooper',
           status: 'active'
         }];
-        $scope.myClose = sinon.stub();
-        var el = compile('<ht-project-editor ht-close="myClose" ng-model="project" ht-projects="projects"></ht-project-editor>');
+        $scope.dialog = {
+          hide: sinon.stub()
+        };
+        var el = compile('<ht-project-editor ht-dialog="dialog" ng-model="project" ht-projects="projects"></ht-project-editor>');
         controller = el.isolateScope().controller;
       });
 
@@ -257,6 +269,10 @@
         it('adds the project to the list', function() {
           expect($scope.projects.length).to.equal(3);
         });
+
+        it('closes the dialog', function() {
+          expect($scope.dialog.hide.calledOnce).to.be.true;
+        });
       });
 
       describe('on failure', function() {
@@ -274,6 +290,10 @@
 
         it('sets an error message', function() {
           expect(controller.errorMessage).to.equal('Because you suck eggs');
+        });
+
+        it('leaves the dialog open', function() {
+          expect($scope.dialog.hide.called).to.be.false;
         });
       });
     });

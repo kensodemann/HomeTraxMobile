@@ -9,7 +9,7 @@
         url: '/list',
         views: {
           'timesheets': {
-            templateUrl: 'app/timesheets/list/list.html',
+            templateUrl: 'app/timesheets/list/listProjects.html',
             controller: 'listTimesheetsController as controller'
           }
         }

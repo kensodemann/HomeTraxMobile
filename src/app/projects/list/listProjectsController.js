@@ -4,6 +4,7 @@
   angular.module('homeTrax.projects.list.listProjectsController', [
     'ui.router',
     'homeTrax.common.core.Status',
+    'homeTrax.common.directives.htSearch',
     'homeTrax.common.resources.Project',
     'homeTrax.common.services.waitSpinner',
     'homeTrax.projects.edit.htProjectEditor'
@@ -13,7 +14,7 @@
         url: '/list',
         views: {
           'projects': {
-            templateUrl: 'app/projects/list/list.html',
+            templateUrl: 'app/projects/list/listProjects.html',
             controller: 'listProjectsController as controller'
           }
         }
@@ -49,7 +50,7 @@
       controller.projects.$promise.finally(waitSpinner.hide);
 
       var template =
-        '<ion-modal-view><ht-project-editor ht-close="controller.projectEditor.hide()" ng-model="controller.currentProject"></ht-project-editor></ion-modal-view>';
+        '<ion-modal-view><ht-project-editor ht-dialog="controller.projectEditor" ng-model="controller.currentProject"></ht-project-editor></ion-modal-view>';
       controller.projectEditor = $ionicModal.fromTemplate(template, {
         scope: $scope,
         backdropClickToClose: false,

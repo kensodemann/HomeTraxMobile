@@ -1,0 +1,11 @@
+.ht-search-input {
+  width: 100%;
+  border-radius: 14px;
+  height: 28px;
+
+  .button.button-icon.button-small:before {
+    margin-top: 1px;
+    font-size: 20px;
+    line-height: 28px;
+  }
+}

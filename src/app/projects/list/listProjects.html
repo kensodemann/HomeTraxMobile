@@ -1,0 +1,28 @@
+<ion-view class="list-page" view-title="Projects">
+  <ion-nav-buttons side="secondary">
+    <button class="button button-icon icon ion-ios-plus-outline" ng-click="controller.create()">
+    </button>
+  </ion-nav-buttons>
+
+  <ion-header-bar class="bar bar-subheader bar-stable item-input-inset">
+    <ht-search ht-placeholder="Filter..." ng-model="controller.searchText"></ht-search>
+  </ion-header-bar>
+
+  <ion-content class="has-subheader">
+    <ion-scroll>
+      <ion-item ng-repeat="project in controller.projects | filter: controller.searchText"
+                ng-show="project.status === 'active' || controller.showInactive"
+                ng-class="{inactive: project.status === 'inactive'}"
+                ng-click="controller.edit(project)">
+        <div class="truncate" ng-bind="project.name" style="font-weight: bold"></div>
+        <div ng-bind="project.jiraTaskId" style="font-size: small"></div>
+        <div ng-bind="project.sbvbTaskId" style="font-size: small"></div>
+      </ion-item>
+    </ion-scroll>
+    </ion-list>
+  </ion-content>
+
+  <ion-footer-bar>
+    <ion-checkbox ng-model="controller.showInactive">Show Inactive Jobs</ion-checkbox>
+  </ion-footer-bar>
+</ion-view>
