@@ -26,7 +26,7 @@
         .state('app.timesheets.view', {
           url: '/view/:id',
           views: {
-            timesheetView: {
+            'timesheets': {
               templateUrl: 'app/timesheets/view/viewTimesheet.html',
               controller: 'viewTimesheetController',
               controllerAs: 'controller'
@@ -78,7 +78,7 @@
     function createTaskTimerEditor() {
       var template = '<ion-modal-view><ht-task-timer-editor ht-dialog="controller.taskTimerEditor" ng-model="controller.currentTaskTimer"></ht-task-timer-editor></ion-modal-view>';
       controller.taskTimerEditor = $ionicModal.fromTemplate(template, {
-        scope: $scope,
+        scope: $scope.$new(),
         backdropClickToClose: false,
         hardwareBackButtonClose: false
       });

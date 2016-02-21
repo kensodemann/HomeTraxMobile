@@ -84,7 +84,9 @@
         backdropClickToClose: false,
         hardwareBackButtonClose: false
       });
-      $scope.$on('$destroy', controller.projectFinderDialog.remove);
+      $scope.$on('$destroy', function() {
+        controller.projectFinderDialog.remove();
+      });
     }
 
     function initializeStageFinder() {
@@ -94,7 +96,9 @@
         backdropClickToClose: false,
         hardwareBackButtonClose: false
       });
-      $scope.$on('$destroy', controller.stageFinderDialog.remove);
+      $scope.$on('$destroy', function() {
+        controller.stageFinderDialog.remove();
+      });
     }
 
     function wrapModal(template) {

@@ -14,9 +14,9 @@
                 ng-show="project.status === 'active' || controller.showInactive"
                 ng-class="{inactive: project.status === 'inactive'}"
                 ng-click="controller.edit(project)">
-        <div class="truncate" ng-bind="project.name" style="font-weight: bold"></div>
-        <div ng-bind="project.jiraTaskId" style="font-size: small"></div>
-        <div ng-bind="project.sbvbTaskId" style="font-size: small"></div>
+        <div class="truncate item-title" ng-bind="project.name"></div>
+        <div class="item-secondary-data" ng-bind="project.jiraTaskId"></div>
+        <div class="item-secondary-data" ng-bind="project.sbvbTaskId"></div>
       </ion-item>
     </ion-scroll>
     </ion-list>
