@@ -20,9 +20,9 @@
     });
 
     describe('select', function() {
-      it('sets the model', function() {
+      it('sets the selected item', function() {
         $scope.model = {};
-        var el = compile('<ht-item-finder ng-model="model"></ht-item-finder>');
+        var el = compile('<ht-item-finder ht-selected-item="model"></ht-item-finder>');
         var controller = el.isolateScope().controller;
         controller.select({
           _id: 12,

@@ -11,8 +11,9 @@
       templateUrl: 'app/common/directives/htItemFinder/htItemFinder.html',
       scope: {},
       bindToController: {
-        htItem: '=ngModel',
-        htItems: '='
+        htSelectedItem: '=',
+        htItems: '=',
+        htFilter: '='
       },
       controller: 'htItemFinderController',
       controllerAs: 'controller'
@@ -25,7 +26,7 @@
     controller.select = selectItem;
 
     function selectItem(item) {
-      controller.htItem = item;
+      controller.htSelectedItem = item;
     }
   }
 }());

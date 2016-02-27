@@ -28,7 +28,7 @@
       });
 
       it('occurs when the model goes from nothing to something', function() {
-        compile('<ht-item-finder-dialog ng-model="model" ht-dialog="dialog"></ht-item-finder-dialog>');
+        compile('<ht-item-finder-dialog ht-selected-item="model" ht-dialog="dialog"></ht-item-finder-dialog>');
         $scope.model = {};
         $scope.$digest();
         expect($scope.dialog.hide.calledOnce).to.be.true;
@@ -36,7 +36,7 @@
 
       it('occurs when the model goes from one thing to another', function() {
         $scope.model = {name: 'Bill'};
-        compile('<ht-item-finder-dialog ng-model="model" ht-dialog="dialog"></ht-item-finder-dialog>');
+        compile('<ht-item-finder-dialog ht-selected-item="model" ht-dialog="dialog"></ht-item-finder-dialog>');
         $scope.model = {name: 'Ted'};
         $scope.$digest();
         expect($scope.dialog.hide.calledOnce).to.be.true;

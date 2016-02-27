@@ -12,7 +12,7 @@
       templateUrl: 'app/common/directives/htItemFinderDialog/htItemFinderDialog.html',
       scope: {},
       bindToController: {
-        htItem: '=ngModel',
+        htSelectedItem: '=',
         htItems: '=',
         htTitle: '@',
         htDialog: '='
@@ -28,7 +28,7 @@
     activate();
 
     function activate() {
-      $scope.$watch('controller.htItem', function(newValue, oldValue) {
+      $scope.$watch('controller.htSelectedItem', function(newValue, oldValue) {
         if (newValue && newValue !== oldValue) {
           controller.htDialog.hide();
         }

@@ -1,10 +1,14 @@
-<form name="itemFinderDialog" class="item-finder-dialog">
+<form name="itemFinderDialog" class="item-finder-dialog list-page">
   <ion-header-bar class="bar bar-positive">
     <h1 class="title" ng-bind="controller.htTitle"></h1>
   </ion-header-bar>
 
+  <ion-header-bar class="bar bar-subheader bar-stable item-input-inset">
+    <ht-search ht-placeholder="Filter..." ng-model="controller.searchText"></ht-search>
+  </ion-header-bar>
+
   <ion-content>
-    <ht-item-finder ht-items="controller.htItems" ng-model="controller.htItem"></ht-item-finder>
+    <ht-item-finder ht-items="controller.htItems" ht-selected-item="controller.htSelectedItem" ht-filter="controller.searchText"></ht-item-finder>
   </ion-content>
 
   <ion-footer-bar>
