@@ -1,0 +1,46 @@
+<form name="taskTimerEditor">
+  <ion-header-bar class="bar-royal">
+    <h1 class="title" ng-bind="controller.title"></h1>
+  </ion-header-bar>
+  <ion-content>
+    <ion-list>
+      <ion-input class="item item-input"
+                 ng-class="{'ion-input-error': taskTimerEditor.project.$invalid}"
+                 ng-click="controller.projectFinderDialog.show()">
+        <ion-label>Project:</ion-label>
+        <span ng-bind="controller.editModel.project.name"></span>
+        <input type="hidden" name="project" ng-model="controller.editModel.project" required/>
+        <div ng-messages="taskTimerEditor.project.$error" role="alert">
+          <div ng-messages-include="app/common/templates/errorMessages.html"></div>
+        </div>
+      </ion-input>
+
+      <ion-input class="item item-input"
+                 ng-class="{'ion-input-error': taskTimerEditor.stage.$invalid}"
+                 ng-click="controller.stageFinderDialog.show()">
+        <ion-label>Stage:</ion-label>
+        <span ng-bind="controller.editModel.stage.name"></span>
+        <input type="hidden" name="stage" ng-model="controller.editModel.stage" required/>
+        <div ng-messages="taskTimerEditor.stage.$error" role="alert">
+          <div ng-messages-include="app/common/templates/errorMessages.html"></div>
+        </div>
+      </ion-input>
+
+      <ion-input class="item item-input">
+        <ion-label>Hours</ion-label>
+        <input type="text" placeholder="Valid Formats: 0:00 or 0.0" ng-model="controller.timeSpent">
+      </ion-input>
+      <ion-item ng-show="controller.errorMessage">
+        <div ng-bind="controller.errorMessage" class="text-error"></div>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+  <ion-footer-bar>
+    <div class="row">
+      <button class="col button button-default" ng-click="controller.htDialog.hide()">Cancel</button>
+      <button class="col button button-energized" ng-click="controller.save()"
+              ng-disabled="taskTimerEditor.$invalid">Save
+      </button>
+    </div>
+  </ion-footer-bar>
+</form>

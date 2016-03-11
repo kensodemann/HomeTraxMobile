@@ -1,0 +1,17 @@
+<ion-view view-title="About">
+  <ion-content>
+    <div style="margin: 18px 0;"></div>
+    <ng-include src="'app/common/templates/homeTraxLogo.html'"></ng-include>
+
+    <dl class="center" style="width: 26em">
+      <dt>Version</dt>
+      <dd ng-bind="controller.clientVersion.name"></dd>
+      <dt>Release Date</dt>
+      <dd ng-bind="controller.clientVersion.releaseDate | date: 'mediumDate'"></dd>
+      <dt>Server Version</dt>
+      <dd ng-bind="controller.serverVersion.name"></dd>
+      <dt>Copyright</dt>
+      <dd>&copy; <span ng-bind="controller.clientVersion.copyright"></span></dd>
+    </dl>
+  </ion-content>
+</ion-view>

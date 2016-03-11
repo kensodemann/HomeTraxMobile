@@ -1,0 +1,17 @@
+@import "../../../../scss/colors";
+
+ht-date-tabs {
+  .row {
+    padding: 0;
+
+    .col {
+      padding: 0;
+      border-bottom: solid 4px transparent;
+      text-align: center;
+
+      &.selected {
+        border-bottom-color: $theme-success;
+      }
+    }
+  }
+}

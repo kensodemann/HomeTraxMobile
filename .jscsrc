@@ -1,0 +1,57 @@
+{
+  "validateIndentation": 2,
+  "excludeFiles": [
+    "bower_components/**",
+    "hooks/**",
+    "HomeTrax-*/**",
+    "node_modules/**",
+    "patches/**",
+    "platforms/**",
+    "plugins/**",
+    "server/node_modules/**",
+    "www/**"
+  ],
+  "requirePaddingNewLinesAfterBlocks": {
+    "allExcept": [
+      "inNewExpressions",
+      "inArrayExpressions"
+    ]
+  },
+  "requirePaddingNewLinesAfterUseStrict": true,
+  "disallowEmptyBlocks": true,
+  "requireCurlyBraces": [
+    "if",
+    "else",
+    "for",
+    "while",
+    "do",
+    "try",
+    "catch"
+  ],
+  "requireSpacesInForStatement": true,
+  "requireSpacesInConditionalExpression": true,
+  "requireSpaceBetweenArguments": true,
+  "requireSpaceAfterKeywords": [
+    "do",
+    "for",
+    "if",
+    "else",
+    "switch",
+    "case",
+    "try",
+    "catch",
+    "void",
+    "while",
+    "with",
+    "return",
+    "typeof"
+  ],
+  "disallowSpacesInFunction": {
+    "beforeOpeningRoundBrace": true
+  },
+  "disallowTrailingComma": true,
+  "validateQuoteMarks": {
+    "mark": "'",
+    "escape": true
+  }
+}

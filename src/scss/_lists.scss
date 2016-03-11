@@ -1,0 +1,40 @@
+.list-header-col {
+  text-align: center;
+  font-weight: bold;
+}
+
+dt {
+  float: left;
+  clear: left;
+  width: 150px;
+  text-align: right;
+  font-weight: bold;
+}
+
+dt:after {
+  content: ":";
+  padding-right: 0.5em;
+}
+
+.list-page {
+  .bar-footer {
+    .item-checkbox {
+      margin: 1px;
+      border: none;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+  }
+
+  .item-title {
+    font-weight: bold;
+  }
+
+  .item-secondary-data {
+    font-size: small;
+  }
+
+  ht-search {
+    width: 100%;
+  }
+}

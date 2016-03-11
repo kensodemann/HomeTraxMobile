@@ -1,51 +1,234 @@
+/* jshint node: true */
+
 var gulp = require('gulp');
 var gutil = require('gulp-util');
-var bower = require('bower');
+
+var componentPaths = require('./conf/component-paths');
 var concat = require('gulp-concat');
-var sass = require('gulp-sass');
+var copy = require('gulp-copy');
+var del = require('del');
 var minifyCss = require('gulp-minify-css');
-var rename = require('gulp-rename');
-var sh = require('shelljs');
+var preprocess = require('gulp-preprocess');
+var sass = require('gulp-sass');
+var sourcemaps = require('gulp-sourcemaps');
 
 var paths = {
-  sass: ['./scss/**/*.scss']
+  fonts: [
+    componentPaths.fonts.fontAwesome + '/**/*',
+    componentPaths.fonts.ionic + '/**/*'
+  ],
+  images: [
+    componentPaths.src + '/img/**/*'
+  ],
+  lib: [
+    componentPaths.lib.ionicBundle.dev,
+    componentPaths.lib.angularLocalStorage.dev,
+    componentPaths.lib.angularIos9UiWebviewPatch.dev,
+    componentPaths.lib.angularMessages.dev,
+    componentPaths.lib.angularResource.dev,
+    componentPaths.lib.moment.dev,
+    componentPaths.lib.underscore.dev
+  ],
+  libRelease: [
+    componentPaths.lib.ionicBundle.release,
+    componentPaths.lib.angularLocalStorage.release,
+    componentPaths.lib.angularIos9UiWebviewPatch.release,
+    componentPaths.lib.angularMessages.release,
+    componentPaths.lib.angularResource.release,
+    componentPaths.lib.moment.release,
+    componentPaths.lib.underscore.release
+  ],
+  main: componentPaths.src + '/main.js',
+  package: 'package.json',
+  sass: [
+    componentPaths.homeTraxSccs
+  ],
+  src: [
+    componentPaths.src + '/app/**/module.js',
+    componentPaths.src + '/app/app.js',
+    componentPaths.src + '/app/**/*.js',
+    '!' + componentPaths.src + '/app/**/*.spec.js'
+  ],
+  views: [
+    componentPaths.src + '/**/*.html'
+  ],
+  watch: [
+    componentPaths.src + '/**/*.scss',
+    componentPaths.src + '/**/*.js',
+    componentPaths.src + '/**/*.html'
+  ]
 };
 
-gulp.task('default', ['sass']);
+function isReleaseBuild() {
+  return gutil.env.type === 'release';
+}
 
-gulp.task('sass', function(done) {
-  gulp.src('./scss/ionic.app.scss')
-    .pipe(sass())
-    .on('error', sass.logError)
-    .pipe(gulp.dest('./www/css/'))
-    .pipe(minifyCss({
-      keepSpecialComments: 0
-    }))
-    .pipe(rename({ extname: '.min.css' }))
-    .pipe(gulp.dest('./www/css/'))
-    .on('end', done);
-});
+function useCloud9() {
+  return gutil.env.dataSource === 'c9';
+}
 
-gulp.task('watch', function() {
-  gulp.watch(paths.sass, ['sass']);
-});
+function useOpenShift() {
+  return gutil.env.dataSource === 'openshift';
+}
 
-gulp.task('install', ['git-check'], function() {
-  return bower.commands.install()
-    .on('log', function(data) {
-      gutil.log('bower', gutil.colors.cyan(data.id), data.message);
-    });
-});
+function isElectronBuild() {
+  return gutil.env.build === 'electron';
+}
 
-gulp.task('git-check', function(done) {
-  if (!sh.which('git')) {
-    console.log(
-      '  ' + gutil.colors.red('Git is not installed.'),
-      '\n  Git, the version control system, is required to download Ionic.',
-      '\n  Download git here:', gutil.colors.cyan('http://git-scm.com/downloads') + '.',
-      '\n  Once git is installed, run \'' + gutil.colors.cyan('gulp install') + '\' again.'
-    );
-    process.exit(1);
+function getBuildContext() {
+  var build = {
+    context: {}
+  };
+
+  if (isReleaseBuild()) {
+    build.context.RELEASE = true;
+  } else {
+    build.context.DEVELOPMENT = true;
   }
-  done();
+
+  if (isElectronBuild()) {
+    build.context.ELECTRON = true;
+  } else {
+    build.context.MOBILE = true;
+  }
+
+  if (useCloud9()) {
+    build.context.CLOUD9 = true;
+  } else if (useOpenShift()) {
+    build.context.OPENSHIFT = true;
+  } else {
+    build.context.LOCAL = true;
+  }
+
+  return build;
+}
+
+// Quality Tasks (linting, testing, etc)
+gulp.task('deleteLintLog', function(done) {
+  del(['jshint-output.log']).then(function() {
+    done();
+  });
+});
+
+gulp.task('lint', ['deleteLintLog', 'clean'], function() {
+  var jshint = require('gulp-jshint');
+  return gulp
+    .src(__dirname + '/**/*.js')
+    .pipe(jshint())
+    .pipe(jshint.reporter('default'))
+    .pipe(jshint.reporter('gulp-jshint-file-reporter'));
+});
+
+gulp.task('style', ['clean'], function() {
+  var jscs = require('gulp-jscs');
+  return gulp
+    .src(__dirname + '/**/*.js')
+    .pipe(jscs())
+    .pipe(jscs.reporter())
+    .pipe(jscs.reporter('fail'));
+});
+
+gulp.task('test', ['build'], function(done) {
+  var Karma = require('karma').Server;
+  var karma = new Karma({
+    configFile: __dirname + '/karma.conf.js',
+    singleRun: true,
+    browsers: ['PhantomJS'],
+    reporters: 'dots'
+  }, done);
+  karma.start();
+});
+
+// Build Tasks
+gulp.task('clean', function(done) {
+  del(['./www', './HomeTrax-*']).then(function() {
+    done();
+  });
+});
+
+gulp.task('copyFonts', ['clean'], function() {
+  gulp.src(paths.fonts)
+    .pipe(copy('./www/css/fonts', {prefix: 3}));
+});
+
+gulp.task('copyImages', ['clean'], function() {
+  gulp.src(paths.images)
+    .pipe(copy('./www/img', {prefix: 2}));
+});
+
+gulp.task('copyElectronFiles', ['clean'], function() {
+  if (isElectronBuild()) {
+    gulp.src(paths.main).pipe(copy('./www', {prefix: 1}));
+    gulp.src(paths.package).pipe(copy('./www'));
+  }
+});
+
+gulp.task('copyViews', ['clean'], function() {
+  var build = getBuildContext();
+  return gulp.src(paths.views)
+    .pipe(preprocess(build))
+    .pipe(gulp.dest('./www', {prefix: 1}));
+});
+
+gulp.task('buildCss', ['clean'], function() {
+  var release = gutil.env.type === 'release';
+  return gulp
+    .src(paths.sass)
+    .pipe(sass())
+    .pipe(release ? minifyCss({keepSpecialComments: 0}) : gutil.noop())
+    .pipe(gulp.dest('./www/css/'));
+});
+
+gulp.task('buildJs', ['clean'], function() {
+  var annotate = require('gulp-ng-annotate');
+  var uglify = require('gulp-uglify');
+  var release = isReleaseBuild();
+  var build = getBuildContext();
+
+  return gulp
+    .src(paths.src)
+    .pipe(release ? gutil.noop() : sourcemaps.init())
+    .pipe(preprocess(build))
+    .pipe(concat('homeTrax.js'))
+    .pipe(annotate())
+    .pipe(release ? gutil.noop() : sourcemaps.write())
+    .pipe(release ? uglify() : gutil.noop())
+    .pipe(gulp.dest('./www/'));
+});
+
+gulp.task('buildLibs', ['clean'], function() {
+  var release = gutil.env.type === 'release';
+  return gulp
+    .src(gutil.env.type === 'release' ? paths.libRelease : paths.lib)
+    .pipe(release ? gutil.noop() : sourcemaps.init())
+    .pipe(concat('libs.js'))
+    .pipe(release ? gutil.noop() : sourcemaps.write())
+    .pipe(gulp.dest('./www/'));
+});
+
+// End user tasks
+gulp.task('build', ['clean', 'buildCss', 'buildJs', 'buildLibs', 'copyElectronFiles', 'copyFonts', 'copyImages', 'copyViews'], function(done) {
+  var packager = require('electron-packager');
+
+  if (isElectronBuild()) {
+    packager({
+      'app-bundle-id': 'com.ken.sodemann.homeTrax',
+      arch: 'x64',
+      dir: 'www/',
+      icon: 'resources/icon.icns',
+      name: 'HomeTrax',
+      platform: 'darwin',
+      version: '0.36.7'
+    }, function() {
+      done();
+    });
+  } else {
+    done();
+  }
+});
+
+gulp.task('default', ['lint', 'style', 'test', 'build']);
+
+gulp.task('dev', ['default'], function() {
+  return gulp.watch(paths.watch, ['default']);
 });

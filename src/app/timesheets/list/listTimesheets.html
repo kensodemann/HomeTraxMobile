@@ -1,0 +1,15 @@
+<ion-view class="list-page" view-title="All Timesheets">
+  <ion-header-bar class="bar bar-subheader bar-stable item-input-inset">
+    <ht-search ht-placeholder="Filter..." ng-model="controller.searchText"></ht-search>
+  </ion-header-bar>
+
+  <ion-content class="has-subheader">
+    <ion-list can-swipe="true">
+      <ion-item ng-repeat="timesheet in controller.timesheets | filter: controller.searchText"
+                ui-sref="app.reports.timeReport({id: timesheet._id})">
+        <div class="item-title">Week Ending: <span ng-bind="timesheet.endDate | date: 'mediumDate'"></span></div>
+        <ion-option-button class="button-default" ui-sref="app.timesheets.view({id: timesheet._id})">Edit</ion-option-button>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

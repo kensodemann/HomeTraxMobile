@@ -1,0 +1,7 @@
+<ion-list>
+  <ion-item
+    ng-repeat="i in controller.htItems | filter: controller.htFilter | orderBy: 'name'"
+    ng-click="controller.select(i)">
+    <span ng-bind="i.name"></span>
+  </ion-item>
+</ion-list>

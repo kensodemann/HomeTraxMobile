@@ -1,0 +1,17 @@
+$fa-font-path: "fonts";
+@import "../../bower_components/font-awesome/scss/font-awesome";
+
+@import "ionic.variable.overrides";
+@import "../../bower_components/ionic/scss/ionic";
+@import "ionic.style.overrides";
+
+@import "colors";
+@import "error";
+@import "lists";
+@import "logo";
+@import "modifiers";
+
+@import "../app/common/directives/htDateTabs/htDateTabs";
+@import "../app/common/directives/htSearch/htSearch";
+@import "../app/common/directives/htTaskTimer/htTaskTimer";
+@import "../app/timesheets/view/viewTimesheet";

@@ -2,7 +2,9 @@
 .vscode/
 typings/
 .DS_Store
+HomeTrax-*/
 
+bower_components/
 node_modules/
 platforms/
 plugins/
