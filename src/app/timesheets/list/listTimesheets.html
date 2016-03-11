@@ -6,7 +6,7 @@
   <ion-content class="has-subheader">
     <ion-list can-swipe="true">
       <ion-item ng-repeat="timesheet in controller.timesheets | filter: controller.searchText"
-                ui-sref="app.timesheets.view({id: timesheet._id})"> <!-- This will eventually change to nav to the time report -->
+                ui-sref="app.reports.timeReport({id: timesheet._id})">
         <div class="item-title">Week Ending: <span ng-bind="timesheet.endDate | date: 'mediumDate'"></span></div>
         <ion-option-button class="button-default" ui-sref="app.timesheets.view({id: timesheet._id})">Edit</ion-option-button>
       </ion-item>
