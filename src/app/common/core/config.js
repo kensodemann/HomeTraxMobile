@@ -1,15 +1,21 @@
 (function() {
   'use strict';
 
-  // @ifdef RELEASE
+  // @ifdef LOCAL
   angular.module('homeTrax.common.core.config', []).constant('config', {
-    dataService: 'https://hometraxdata-kensodemann.rhcloud.com'
+    dataService: 'http://localhost:8080'
   });
   // @endif
 
-  // @ifdef DEVELOPMENT
+  // @ifdef CLOUD9
   angular.module('homeTrax.common.core.config', []).constant('config', {
-    dataService: 'http://localhost:8080'
+    dataService: 'https://hometraxdata-kensodemann.c9.io'
+  });
+  // @endif
+
+  // @ifdef OPENSHIFT
+  angular.module('homeTrax.common.core.config', []).constant('config', {
+    dataService: 'https://hometraxdata-kensodemann.rhcloud.com'
   });
   // @endif
 }());

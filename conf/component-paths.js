@@ -5,12 +5,13 @@ module.exports = {
   homeTraxSccs: 'src/scss/homeTrax.scss',
   test: 'tests',
   src: 'src',
+  buildDir: 'www',
   lib: {
     ionicBundle: {
       dev: 'bower_components/ionic/js/ionic.bundle.js',
       release: 'bower_components/ionic/js/ionic.bundle.min.js'
     },
-    angularIos9UiWebviewPatch:{
+    angularIos9UiWebviewPatch: {
       dev: 'patches/angular-ios9-uiwebview.patch.js',
       release: 'patches/angular-ios9-uiwebview.patch.min.js'
     },

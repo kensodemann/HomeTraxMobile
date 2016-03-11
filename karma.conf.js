@@ -16,15 +16,9 @@ module.exports = function(config) {
       componentPaths.lib.moment.dev,
       componentPaths.lib.underscore.dev,
 
-      componentPaths.src + '/app/**/module.js',
-      componentPaths.test + '/testApp.js',
-
-      componentPaths.src + '/app/**/*.js',
+      componentPaths.buildDir + '/homeTrax.js',
+      componentPaths.src + '/app/**/*.spec.js',
       componentPaths.src + '/app/**/*.html'
-    ],
-
-    exclude: [
-      componentPaths.src + '/app/app.js'
     ],
 
     preprocessors: {

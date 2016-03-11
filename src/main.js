@@ -199,7 +199,7 @@ app.on('ready', function() {
   Menu.setApplicationMenu(menu);
 
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 1024, height: 768});
+  mainWindow = new BrowserWindow({width: 1280, height: 768});
 
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/index.html');

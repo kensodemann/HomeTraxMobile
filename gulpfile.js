@@ -63,6 +63,14 @@ function isReleaseBuild() {
   return gutil.env.type === 'release';
 }
 
+function useCloud9() {
+  return gutil.env.dataSource === 'c9';
+}
+
+function useOpenShift() {
+  return gutil.env.dataSource === 'openshift';
+}
+
 function isElectronBuild() {
   return gutil.env.build === 'electron';
 }
@@ -82,6 +90,14 @@ function getBuildContext() {
     build.context.ELECTRON = true;
   } else {
     build.context.MOBILE = true;
+  }
+
+  if (useCloud9()) {
+    build.context.CLOUD9 = true;
+  } else if (useOpenShift()) {
+    build.context.OPENSHIFT = true;
+  } else {
+    build.context.LOCAL = true;
   }
 
   return build;
@@ -112,7 +128,7 @@ gulp.task('style', ['clean'], function() {
     .pipe(jscs.reporter('fail'));
 });
 
-gulp.task('test', function(done) {
+gulp.task('test', ['build'], function(done) {
   var Karma = require('karma').Server;
   var karma = new Karma({
     configFile: __dirname + '/karma.conf.js',
@@ -125,7 +141,7 @@ gulp.task('test', function(done) {
 
 // Build Tasks
 gulp.task('clean', function(done) {
-  del(['./www']).then(function() {
+  del(['./www', './HomeTrax-*']).then(function() {
     done();
   });
 });
@@ -191,7 +207,27 @@ gulp.task('buildLibs', ['clean'], function() {
 });
 
 // End user tasks
-gulp.task('default', ['lint', 'style', 'test', 'buildCss', 'buildJs', 'buildLibs', 'copyElectronFiles', 'copyFonts', 'copyImages', 'copyViews']);
+gulp.task('build', ['clean', 'buildCss', 'buildJs', 'buildLibs', 'copyElectronFiles', 'copyFonts', 'copyImages', 'copyViews'], function(done) {
+  var packager = require('electron-packager');
+
+  if (isElectronBuild()) {
+    packager({
+      'app-bundle-id': 'com.ken.sodemann.homeTrax',
+      arch: 'x64',
+      dir: 'www/',
+      icon: 'resources/icon.icns',
+      name: 'HomeTrax',
+      platform: 'darwin',
+      version: '0.36.7'
+    }, function() {
+      done();
+    });
+  } else {
+    done();
+  }
+});
+
+gulp.task('default', ['lint', 'style', 'test', 'build']);
 
 gulp.task('dev', ['default'], function() {
   return gulp.watch(paths.watch, ['default']);
