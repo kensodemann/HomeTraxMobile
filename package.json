@@ -1,7 +1,7 @@
 {
-  "name": "HomeTraxMobile",
+  "name": "HomeTrax",
   "version": "1.1.1",
-  "description": "HomeTraxMobile: A mobile version of HomeTrax time tracking",
+  "description": "HomeTrax: Time Tracking, Simplified",
   "main": "main.js",
   "repository": {
     "type": "git",
@@ -13,6 +13,7 @@
     "chai": "^3.4.1",
     "del": "^2.2.0",
     "electron-packager": "^5.2.1",
+    "electron-prebuilt": "^0.36.11",
     "express": "^4.13.3",
     "gulp": "^3.5.6",
     "gulp-concat": "^2.2.0",
@@ -31,6 +32,7 @@
     "karma": "^0.13.15",
     "karma-chai-plugins": "^0.6.1",
     "karma-chrome-launcher": "^0.2.2",
+    "karma-electron-launcher": "^0.1.0",
     "karma-mocha": "^0.2.1",
     "karma-ng-html2js-preprocessor": "^0.2.0",
     "karma-phantomjs-launcher": "^0.2.1",

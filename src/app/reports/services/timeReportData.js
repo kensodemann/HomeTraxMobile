@@ -79,11 +79,14 @@
     }
 
     function unclassifiedLast(a, b) {
-      if (a.substring(0, 12) === unclassified) {
+      var aIsUnclassified = a.substring(0, 12) === unclassified;
+      var bIsUnclassified = b.substring(0, 12) === unclassified;
+
+      if (aIsUnclassified && !bIsUnclassified) {
         return 1;
       }
 
-      if (b.substring(0, 12) === unclassified) {
+      if (bIsUnclassified && !aIsUnclassified) {
         return -1;
       }
 

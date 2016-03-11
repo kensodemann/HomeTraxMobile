@@ -130,10 +130,12 @@ gulp.task('style', ['clean'], function() {
 
 gulp.task('test', ['build'], function(done) {
   var Karma = require('karma').Server;
+  var confFile = isElectronBuild() ? '/karma-electron.conf.js' : '/karma.conf.js';
+  var browsers = isElectronBuild() ? ['Electron'] : ['PhantomJS'];
   var karma = new Karma({
-    configFile: __dirname + '/karma.conf.js',
+    configFile: __dirname + confFile,
     singleRun: true,
-    browsers: ['PhantomJS'],
+    browsers: browsers,
     reporters: 'dots'
   }, done);
   karma.start();
@@ -217,8 +219,7 @@ gulp.task('build', ['clean', 'buildCss', 'buildJs', 'buildLibs', 'copyElectronFi
       dir: 'www/',
       icon: 'resources/icon.icns',
       name: 'HomeTrax',
-      platform: 'darwin',
-      version: '0.36.7'
+      platform: 'darwin'
     }, function() {
       done();
     });
