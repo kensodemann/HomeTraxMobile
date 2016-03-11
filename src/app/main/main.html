@@ -18,19 +18,19 @@
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <ion-item menu-close href="#/app/timesheets/view">
+        <ion-item menu-close ui-sref="app.timesheets.viewCurrent">
           This Week
         </ion-item>
-        <ion-item menu-close href="#/app/reports/timeReport">
+        <ion-item menu-close ui-sref="app.reports.currentTimeReport">
           Time Report
         </ion-item>
-        <ion-item menu-close href="#/app/timesheets/list">
+        <ion-item menu-close ui-sref="app.timesheets.list">
           All Weeks
         </ion-item>
-        <ion-item menu-close href="#/app/projects/list">
+        <ion-item menu-close ui-sref="app.projects.list">
           Projects
         </ion-item>
-        <ion-item menu-close href="#/app/about">
+        <ion-item menu-close ui-sref="app.about">
           About
         </ion-item>
         <ion-item menu-close ng-click="controller.logout()">
