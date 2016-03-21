@@ -19,6 +19,20 @@
       expect(el[0].innerHTML).to.contain('<ion-list>');
     });
 
+    describe('template', function() {
+      it('uses the specified template', function() {
+        var el = compile('<ht-item-finder ht-template-url="app/something.html"></ht-item-finder>');
+        var controller = el.isolateScope().controller;
+        expect(controller.templateUrl).to.equal('app/something.html');
+      });
+
+      it('defaults to the objectName template if none is specified', function() {
+        var el = compile('<ht-item-finder></ht-item-finder>');
+        var controller = el.isolateScope().controller;
+        expect(controller.templateUrl).to.equal('app/common/templates/objectName.html');
+      });
+    });
+
     describe('select', function() {
       it('sets the selected item', function() {
         $scope.model = {};

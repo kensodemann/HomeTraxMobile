@@ -78,7 +78,7 @@
     }
 
     function initializeProjectFinder() {
-      var template = '<ht-item-finder-dialog ht-dialog="controller.projectFinderDialog" ht-selected-item="controller.editModel.project" ht-items="controller.projects" ht-title="Find Project"></ht-item-finder-dialog>';
+      var template = '<ht-item-finder-dialog ht-dialog="controller.projectFinderDialog" ht-selected-item="controller.editModel.project" ht-items="controller.projects" ht-title="Find Project" ht-template-url="app/common/templates/projectListItem.html"></ht-item-finder-dialog>';
       controller.projectFinderDialog = $ionicModal.fromTemplate(wrapModal(template), {
         scope: $scope,
         backdropClickToClose: false,
@@ -90,7 +90,7 @@
     }
 
     function initializeStageFinder() {
-      var template = '<ht-item-finder-dialog ht-dialog="controller.stageFinderDialog" ht-selected-item="controller.editModel.stage" ht-items="controller.stages" ht-title="Find Stage"></ht-item-finder-dialog>';
+      var template = '<ht-item-finder-dialog ht-dialog="controller.stageFinderDialog" ht-selected-item="controller.editModel.stage" ht-items="controller.stages" ht-title="Find Stage" ht-template-url="app/common/templates/stageListItem.html"></ht-item-finder-dialog>';
       controller.stageFinderDialog = $ionicModal.fromTemplate(wrapModal(template), {
         scope: $scope,
         backdropClickToClose: false,

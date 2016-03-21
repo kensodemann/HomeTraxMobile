@@ -13,7 +13,8 @@
       bindToController: {
         htSelectedItem: '=',
         htItems: '=',
-        htFilter: '='
+        htFilter: '=',
+        htTemplateUrl: '@'
       },
       controller: 'htItemFinderController',
       controllerAs: 'controller'
@@ -22,6 +23,8 @@
 
   function HtItemFinderController() {
     var controller = this;
+
+    controller.templateUrl = controller.htTemplateUrl || 'app/common/templates/objectName.html';
 
     controller.select = selectItem;
 

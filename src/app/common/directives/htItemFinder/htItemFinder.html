@@ -1,7 +1,7 @@
 <ion-list>
   <ion-item
-    ng-repeat="i in controller.htItems | filter: controller.htFilter | orderBy: 'name'"
-    ng-click="controller.select(i)">
-    <span ng-bind="i.name"></span>
+    ng-repeat="item in controller.htItems | filter: controller.htFilter | orderBy: 'name'"
+    ng-click="controller.select(item)">
+    <span ng-include="controller.templateUrl"></span>
   </ion-item>
 </ion-list>
