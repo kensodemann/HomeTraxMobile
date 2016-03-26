@@ -50,7 +50,7 @@
     describe('changing the htProject model', function() {
       it('copies the project to the editor model', function() {
         $scope.project = {};
-        var el = compile('<ht-project-editor ng-model="project"></ht-project-editor>');
+        var el = compile('<ht-project-editor ht-project="project"></ht-project-editor>');
         var controller = el.isolateScope().controller;
         $scope.project = {
           _id: 42,
@@ -68,7 +68,7 @@
           name: 'Aurher Dent',
           status: 'active'
         };
-        var el = compile('<ht-project-editor ng-model="project"></ht-project-editor>');
+        var el = compile('<ht-project-editor ht-project="project"></ht-project-editor>');
         var controller = el.isolateScope().controller;
         expect(controller.title).to.equal('Modify Project');
       });
@@ -77,7 +77,7 @@
         $scope.project = {
           status: 'active'
         };
-        var el = compile('<ht-project-editor ng-model="project"></ht-project-editor>');
+        var el = compile('<ht-project-editor ht-project="project"></ht-project-editor>');
         var controller = el.isolateScope().controller;
         expect(controller.title).to.equal('New Project');
       });
@@ -86,7 +86,7 @@
         $scope.project = {
           status: 'active'
         };
-        var el = compile('<ht-project-editor ng-model="project"></ht-project-editor>');
+        var el = compile('<ht-project-editor ht-project="project"></ht-project-editor>');
         var controller = el.isolateScope().controller;
         expect(controller.projectIsActive).to.be.true;
       });
@@ -95,7 +95,7 @@
         $scope.project = {
           status: 'inactive'
         };
-        var el = compile('<ht-project-editor ng-model="project"></ht-project-editor>');
+        var el = compile('<ht-project-editor ht-project="project"></ht-project-editor>');
         var controller = el.isolateScope().controller;
         expect(controller.projectIsActive).to.be.false;
       });
@@ -121,7 +121,7 @@
         $scope.dialog = {
           hide: sinon.stub()
         };
-        var el = compile('<ht-project-editor ht-dialog="dialog" ng-model="project" ht-projects="projects"></ht-project-editor>');
+        var el = compile('<ht-project-editor ht-dialog="dialog" ht-project="project" ht-projects="projects"></ht-project-editor>');
         controller = el.isolateScope().controller;
       });
 
@@ -221,7 +221,7 @@
         $scope.dialog = {
           hide: sinon.stub()
         };
-        var el = compile('<ht-project-editor ht-dialog="dialog" ng-model="project" ht-projects="projects"></ht-project-editor>');
+        var el = compile('<ht-project-editor ht-dialog="dialog" ht-project="project" ht-projects="projects"></ht-project-editor>');
         controller = el.isolateScope().controller;
       });
 

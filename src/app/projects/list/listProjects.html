@@ -10,13 +10,11 @@
 
   <ion-content class="has-subheader">
     <ion-scroll>
-      <ion-item ng-repeat="project in controller.projects | filter: controller.searchText"
-                ng-show="project.status === 'active' || controller.showInactive"
-                ng-class="{inactive: project.status === 'inactive'}"
-                ng-click="controller.edit(project)">
-        <div class="truncate item-title" ng-bind="project.name"></div>
-        <div class="item-secondary-data" ng-bind="project.jiraTaskId"></div>
-        <div class="item-secondary-data" ng-bind="project.sbvbTaskId"></div>
+      <ion-item ng-repeat="item in controller.projects | filter: controller.searchText"
+                ng-show="item.status === 'active' || controller.showInactive"
+                ng-class="{inactive: item.status === 'inactive'}"
+                ng-click="controller.edit(item)">
+        <ng-include src="'app/common/templates/projectListItem.html'"></ng-include>
       </ion-item>
     </ion-scroll>
     </ion-list>

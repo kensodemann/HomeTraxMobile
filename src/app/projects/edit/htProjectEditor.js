@@ -17,7 +17,7 @@
       controllerAs: 'controller',
       scope: {},
       bindToController: {
-        htProject: '=ngModel',
+        htProject: '=',
         htProjects: '=',
         htDialog: '='
       }

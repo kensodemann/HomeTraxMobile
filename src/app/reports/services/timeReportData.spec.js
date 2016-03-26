@@ -64,9 +64,9 @@
         expect(summaryData.sbvbTasks[6].project.sbvbTaskId).to.equal('XYZ14167');
         expect(summaryData.sbvbTasks[6].stage.stageNumber).to.equal(2);
         expect(summaryData.sbvbTasks[7].project.sbvbTaskId).to.not.exist;
-        expect(summaryData.sbvbTasks[7].stage.stageNumber).to.equal(0);
+        expect(summaryData.sbvbTasks[7].stage.stageNumber).to.equal(4);
         expect(summaryData.sbvbTasks[8].project.sbvbTaskId).to.not.exist;
-        expect(summaryData.sbvbTasks[8].stage.stageNumber).to.equal(4);
+        expect(summaryData.sbvbTasks[8].stage.stageNumber).to.equal(0);
       });
 
       it('sums each SBVB task, including unclassified, and stage', function() {
@@ -77,8 +77,8 @@
         expect(summaryData.sbvbTasks[4].totalTime).to.equal(7200000);
         expect(summaryData.sbvbTasks[5].totalTime).to.equal(35412364);
         expect(summaryData.sbvbTasks[6].totalTime).to.equal(90000000);
-        expect(summaryData.sbvbTasks[7].totalTime).to.equal(900000);
-        expect(summaryData.sbvbTasks[8].totalTime).to.equal(1800000);
+        expect(summaryData.sbvbTasks[7].totalTime).to.equal(1800000);
+        expect(summaryData.sbvbTasks[8].totalTime).to.equal(900000);
       });
     });
 

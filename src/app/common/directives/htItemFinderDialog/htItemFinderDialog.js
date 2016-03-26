@@ -14,6 +14,7 @@
       bindToController: {
         htSelectedItem: '=',
         htItems: '=',
+        htTemplateUrl: '@',
         htTitle: '@',
         htDialog: '='
       },

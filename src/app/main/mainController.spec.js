@@ -7,6 +7,7 @@
     var $httpBackend;
     var mockIdentity;
     var mockState;
+    var mockSystemMenu;
     var $controllerConstructor;
 
     beforeEach(module('homeTrax.main.mainController'));
@@ -35,6 +36,13 @@
       });
     });
 
+    beforeEach(function() {
+      mockSystemMenu = sinon.stub({
+        initialize: function() {
+        }
+      });
+    });
+
     afterEach(function() {
       $httpBackend.verifyNoOutstandingExpectation();
       $httpBackend.verifyNoOutstandingRequest();
@@ -42,7 +50,8 @@
 
     function createController() {
       return $controllerConstructor('mainController', {
-        $state: mockState
+        $state: mockState,
+        systemMenu: mockSystemMenu
       });
     }
 

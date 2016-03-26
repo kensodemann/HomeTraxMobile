@@ -8,7 +8,10 @@
   </ion-header-bar>
 
   <ion-content>
-    <ht-item-finder ht-items="controller.htItems" ht-selected-item="controller.htSelectedItem" ht-filter="controller.searchText"></ht-item-finder>
+    <ht-item-finder ht-items="controller.htItems"
+                    ht-selected-item="controller.htSelectedItem"
+                    ht-filter="controller.searchText"
+                    ht-template-url="{{controller.htTemplateUrl}}"></ht-item-finder>
   </ion-content>
 
   <ion-footer-bar>
