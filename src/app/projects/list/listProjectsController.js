@@ -50,7 +50,7 @@
       controller.projects.$promise.finally(waitSpinner.hide);
 
       var template =
-        '<ion-modal-view><ht-project-editor ht-dialog="controller.projectEditor" ng-model="controller.currentProject"></ht-project-editor></ion-modal-view>';
+        '<ion-modal-view><ht-project-editor ht-dialog="controller.projectEditor" ht-project="controller.currentProject" ht-projects="controller.projects"></ht-project-editor></ion-modal-view>';
       controller.projectEditor = $ionicModal.fromTemplate(template, {
         scope: $scope,
         backdropClickToClose: false,
