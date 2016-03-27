@@ -52,6 +52,17 @@
       });
     });
 
+    describe('load', function() {
+      it('queries the stages each time it is called', function() {
+        stages.load();
+        expect(mockStage.query.calledOnce).to.be.true;
+        stages.load();
+        expect(mockStage.query.calledTwice).to.be.true;
+        stages.load();
+        expect(mockStage.query.calledThrice).to.be.true;
+      });
+    });
+
     function initializeTestData() {
       testData = [{
         stageNumber: 1,

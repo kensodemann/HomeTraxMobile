@@ -3,7 +3,8 @@
 
   angular.module('homeTrax.login.loginController', [
     'ui.router',
-    'homeTrax.authentication.authenticationService'
+    'homeTrax.authentication.authenticationService',
+    'homeTrax.common.services.stages'
   ]).controller('loginController', LoginController)
     .config(function($stateProvider) {
       $stateProvider.state('login', {
@@ -14,7 +15,7 @@
       });
     });
 
-  function LoginController($state, $ionicHistory, authenticationService, waitSpinner) {
+  function LoginController($state, $ionicHistory, authenticationService, waitSpinner, stages) {
     var controller = this;
 
     controller.username = '';
@@ -34,6 +35,7 @@
         controller.password = '';
         waitSpinner.hide();
         if (success) {
+          stages.load();
           $ionicHistory.clearHistory();
           $ionicHistory.clearCache().then(function(){
             $state.go('app.timesheets.viewCurrent');

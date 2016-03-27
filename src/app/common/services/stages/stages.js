@@ -9,13 +9,18 @@
     var cachedStages;
 
     return {
+      load: load,
       get all() {
         if (!cachedStages) {
-          cachedStages = Stage.query();
+          load();
         }
 
         return cachedStages;
       }
     };
+
+    function load() {
+      cachedStages = Stage.query();
+    }
   }
 }());
