@@ -31,6 +31,7 @@
       forEach(keys, function(key) {
         dates.push({
           date: key,
+          totalTime: sum(tasksByDate[key]),
           jiraTasks: summarizedJiraTasks(tasksByDate[key]),
           sbvbTasks: summarizedSbvbTasks(tasksByDate[key])
         });

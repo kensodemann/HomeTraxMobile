@@ -11,6 +11,8 @@
 
     var $controllerConstructor;
 
+    var testDays;
+
     var getCurrentDfd;
     var getDfd;
     var loadDfd;
@@ -38,6 +40,7 @@
     });
 
     beforeEach(function() {
+      testDays = [{date: '2015-11-30'}, {date: '2015-12-01'}, {date: '2015-12-02'}, {date: '2015-12-03'}];
       mockTimeReportData = sinon.stub({
         getSummaryData: function() {
         },
@@ -46,7 +49,7 @@
         }
       });
       mockTimeReportData.getSummaryData.returns('Summary Data');
-      mockTimeReportData.getDailySummaryData.returns('Daily Summary Data');
+      mockTimeReportData.getDailySummaryData.returns(testDays);
     });
 
     beforeEach(function() {
@@ -178,7 +181,16 @@
         $scope.$digest();
         expect(mockTimeReportData.getDailySummaryData.calledOnce).to.be.true;
         expect(mockTimeReportData.getDailySummaryData.calledWith([1, 2, 3, 4])).to.be.true;
-        expect(controller.dailySummaryData).to.equal('Daily Summary Data');
+        expect(controller.dailySummaryData).to.equal(testDays);
+      });
+
+      it('sets each day initially visible', function() {
+        getCurrentDfd.resolve();
+        loadDfd.resolve();
+        $scope.$digest();
+        controller.dailySummaryData.forEach(function(day) {
+          expect(day.show).to.be.true;
+        });
       });
     });
   });

@@ -1,27 +1,34 @@
 <ion-view view-title="Time Report">
   <ion-content>
     <ion-list>
-      <div ng-repeat="day in controller.dailySummaryData">
-        <ion-item class="item-divider"><span ng-bind="day.date | date:'mediumDate'"></span> - Hours by SBVB Task
-        </ion-item>
-        <ion-item ng-repeat="task in day.sbvbTasks">
-          <div class="row row-no-padding">
-            <div class="col truncate">
-              <span><span ng-bind="task.project.sbvbTaskId"></span> - (<span
-                ng-bind="task.stage.stageNumber"></span>) <span ng-bind="task.stage.name"></span></span>
-            </div>
-            <div class="col-20">
-              <span class="pull-right" ng-bind="task.totalTime | hoursMinutes"></span>
-            </div>
+      <div ng-repeat="day in controller.dailySummaryData" ng-click="day.show = !day.show">
+        <ion-item class="item-divider">
+          <span ng-bind="day.date | date:'mediumDate'"></span>
+          <div class="pull-right">
+            <span>Hours: <span ng-bind="day.totalTime | hoursMinutes"></span></span>
+            <span ng-class="day.show ? 'ion-arrow-down-b' : 'ion-arrow-right-b'"></span>
           </div>
         </ion-item>
+        <div ng-if="day.show">
+          <ion-item class="item-sub-divider">Hours by SBVB Task</ion-item>
+          <ion-item ng-repeat="task in day.sbvbTasks">
+            <div class="row row-no-padding">
+              <div class="col truncate">
+              <span><span ng-bind="task.project.sbvbTaskId"></span> - (<span
+                ng-bind="task.stage.stageNumber"></span>) <span ng-bind="task.stage.name"></span></span>
+              </div>
+              <div class="col-20">
+                <span class="pull-right" ng-bind="task.totalTime | hoursMinutes"></span>
+              </div>
+            </div>
+          </ion-item>
 
-        <ion-item class="item-divider"><span ng-bind="day.date | date:'mediumDate'"></span> - Hours by Jira Task
-        </ion-item>
-        <ion-item ng-repeat="task in day.jiraTasks">
-          <span ng-bind="task.project.jiraTaskId || 'Unclassified'"></span>
-          <span class="pull-right" ng-bind="task.totalTime | hoursMinutes"></span>
-        </ion-item>
+          <ion-item class="item-sub-divider">Hours by Jira Task</ion-item>
+          <ion-item ng-repeat="task in day.jiraTasks">
+            <span ng-bind="task.project.jiraTaskId || 'Unclassified'"></span>
+            <span class="pull-right" ng-bind="task.totalTime | hoursMinutes"></span>
+          </ion-item>
+        </div>
       </div>
     </ion-list>
   </ion-content>
