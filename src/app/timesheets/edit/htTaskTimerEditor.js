@@ -12,7 +12,8 @@
     'homeTrax.common.services.stages',
     'homeTrax.common.services.timesheetTaskTimers',
     'homeTrax.common.services.timeUtility',
-    'homeTrax.common.services.waitSpinner'
+    'homeTrax.common.services.waitSpinner',
+    'homeTrax.common.validations.validTimeFormat'
   ]).directive('htTaskTimerEditor', htTaskTimerEditor)
     .controller('htTaskTimerEditorController', HtTaskTimerEditorController);
 

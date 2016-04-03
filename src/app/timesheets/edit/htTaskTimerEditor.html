@@ -26,9 +26,13 @@
         </div>
       </ion-input>
 
-      <ion-input class="item item-input">
+      <ion-input class="item item-input"
+                 ng-class="{'ion-input-error': taskTimerEditor.timeSpent.$invalid}">
         <ion-label>Hours</ion-label>
-        <input type="text" placeholder="Valid Formats: 0:00 or 0.0" ng-model="controller.timeSpent">
+        <input type="text" name="timeSpent" placeholder="Valid Formats: 0:00 or 0.0" ng-model="controller.timeSpent" valid-time-format>
+        <div ng-messages="taskTimerEditor.timeSpent.$error" role="alert">
+          <div ng-messages-include="app/common/templates/errorMessages.html"></div>
+        </div>
       </ion-input>
       <ion-item ng-show="controller.errorMessage">
         <div ng-bind="controller.errorMessage" class="text-error"></div>
