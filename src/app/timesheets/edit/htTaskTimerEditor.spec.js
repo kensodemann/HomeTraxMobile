@@ -78,6 +78,11 @@
       });
     });
 
+    beforeEach(inject(function($templateCache) {
+      $templateCache.put('app/common/templates/errorMessages.html', '<div></div>');
+    }));
+
+
     beforeEach(inject(function($rootScope, _$compile_, _$httpBackend_, _config_) {
       $scope = $rootScope;
       $compile = _$compile_;
