@@ -8,6 +8,7 @@
     'homeTrax.about.aboutController',
     'homeTrax.authentication.AuthenticationEvents',
     'homeTrax.authentication.authenticationInterceptor',
+    'homeTrax.common.services.systemMenu',
     'homeTrax.login.loginController',
     'homeTrax.main.mainController',
     'homeTrax.projects',
@@ -16,13 +17,10 @@
   ]).config(authentication)
     .config(routing)
     .config(localStorage)
-    .run(function($log, $ionicPlatform, $rootScope, $state, AuthenticationEvents) {
-      // @ifdef MOBILE
-      initializePlatform($ionicPlatform);
-      // @endif
-      logStateChangeError($rootScope, $log);
-      redirectWhenNotAuthenticated($rootScope, AuthenticationEvents, $state);
-    });
+    .run(initializePlatform)
+    .run(inializeSystemMenu)
+    .run(logStateChangeError)
+    .run(redirectWhenNotAuthenticated);
 
   function authentication($httpProvider) {
     $httpProvider.interceptors.push('authenticationInterceptor');
@@ -45,8 +43,8 @@
     localStorageServiceProvider.setPrefix('HomeTrax');
   }
 
-  // @ifdef MOBILE
   function initializePlatform($ionicPlatform) {
+    // @ifdef MOBILE
     $ionicPlatform.ready(function() {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
@@ -61,8 +59,19 @@
         window.StatusBar.styleDefault();
       }
     });
+    // @endif
   }
-  // @endif
+
+  function inializeSystemMenu($log, $rootScope, systemMenu) {
+    systemMenu.initialize();
+    $rootScope.$on('$stateChangeSuccess', function(event, toState) {
+      $log.log('$stateChangeSuccess');
+      var m = systemMenu.getNewItemMenuItem();
+      if (m) {
+        m.enabled = !!toState.htEnableNewItemMenuItem;
+      }
+    });
+  }
 
   function logStateChangeError($rootScope, $log) {
     $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {

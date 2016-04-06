@@ -6,9 +6,10 @@
     'ui.router'
   ]).factory('systemMenu', systemMenu);
 
-  function systemMenu($state, $ionicHistory) {
+  function systemMenu($rootScope, $state, $ionicHistory) {
     var service = {
-      initialize: initialize
+      initialize: initialize,
+      getNewItemMenuItem: getNewItemMenuItem
     };
 
     // @ifdef ELECTRON
@@ -48,6 +49,13 @@
     var fileMenu = {
       label: 'File',
       submenu: [{
+        label: 'New...',
+        accelerator: 'CmdOrCtrl+N',
+        enabled: false,
+        click: function() {
+          $rootScope.$broadcast('home-trax-new-item');
+        }
+      }, {
         label: 'Projects',
         accelerator: 'CmdOrCtrl+P',
         click: function() {
@@ -144,7 +152,7 @@
       }]
     };
 
-    function prependMainMenu(template){
+    function prependMainMenu(template) {
       var name = remote.app.getName();
       template.unshift({
         label: name,
@@ -184,7 +192,7 @@
       });
     }
 
-    function appendToWindowMenu(menu){
+    function appendToWindowMenu(menu) {
       menu.submenu.push({
         type: 'separator'
       }, {
@@ -193,13 +201,16 @@
       });
     }
 
-    function goToState(s){
+    function goToState(s) {
       $ionicHistory.nextViewOptions({
         disableBack: true
       });
       $state.go(s);
     }
+
     // @endif
+
+    var menu = {};
 
     function initialize() {
       // @ifdef ELECTRON
@@ -211,9 +222,27 @@
       }
 
       var Menu = remote.Menu;
-      var menu = Menu.buildFromTemplate(template);
+      menu = Menu.buildFromTemplate(template);
       Menu.setApplicationMenu(menu);
       // @endif
+    }
+
+    function getNewItemMenuItem() {
+      var newItemMenuItem;
+
+      // @ifdef ELECTRON
+      var fileMenu = _.find(menu.items, function(m) {
+        return m.label === 'File';
+      });
+
+      if (fileMenu) {
+        newItemMenuItem = _.find(fileMenu.submenu.items, function(m) {
+          return m.label === 'New...';
+        });
+      }
+      // @endif
+
+      return newItemMenuItem;
     }
 
     return service;

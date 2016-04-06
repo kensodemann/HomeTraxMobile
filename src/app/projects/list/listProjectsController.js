@@ -12,6 +12,7 @@
     .config(function($stateProvider) {
       $stateProvider.state('app.projects.list', {
         url: '/list',
+        htEnableNewItemMenuItem: true,
         views: {
           'projects': {
             templateUrl: 'app/projects/list/listProjects.html',
@@ -21,7 +22,7 @@
       });
     });
 
-  function ListProjectsController($scope, $ionicModal, Project, waitSpinner, Status) {
+  function ListProjectsController($state, $scope, $ionicModal, Project, waitSpinner, Status) {
     var controller = this;
 
     controller.projects = Project.query();
@@ -59,6 +60,12 @@
 
       $scope.$on('$destroy', function() {
         controller.projectEditor.remove();
+      });
+
+      $scope.$on('home-trax-new-item', function() {
+        if ($state.current.name === 'app.projects.list') {
+          createProject();
+        }
       });
     }
   }

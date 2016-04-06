@@ -4,6 +4,7 @@
 
   describe('homeTrax.timesheets.view.viewTimesheetController', function() {
     var mockIonicModal;
+    var mockState;
     var mockStateParams;
     var mockTaskTimerEditor;
     var mockTimesheets;
@@ -11,6 +12,7 @@
 
     var $controllerConstructor;
     var $interval;
+    var $rootScope;
     var $scope;
 
     var clock;
@@ -27,12 +29,13 @@
       initializeTestData();
     });
 
-    beforeEach(inject(function($controller, $q, $rootScope, _$interval_) {
+    beforeEach(inject(function($controller, $q, _$rootScope_, _$interval_) {
       $controllerConstructor = $controller;
       getDfd = $q.defer();
       loadDfd = $q.defer();
       startDfd = $q.defer();
       stopDfd = $q.defer();
+      $rootScope = _$rootScope_;
       $scope = $rootScope.$new();
       $interval = _$interval_;
     }));
@@ -57,6 +60,14 @@
         }
       });
       mockIonicModal.fromTemplate.returns(mockTaskTimerEditor);
+    });
+
+    beforeEach(function() {
+      mockState = {
+        current: {
+          name: 'does not usually matter'
+        }
+      };
     });
 
     beforeEach(function() {
@@ -109,6 +120,7 @@
       var controller = $controllerConstructor('viewTimesheetController', {
         $scope: $scope,
         $stateParams: mockStateParams,
+        $state: mockState,
         $ionicModal: mockIonicModal,
         timesheets: mockTimesheets,
         timesheetTaskTimers: mockTimesheetTaskTimers
@@ -306,6 +318,65 @@
       it('shows the task timer editor', function() {
         controller.createTaskTimer();
         expect(mockTaskTimerEditor.show.calledOnce).to.be.true;
+      });
+    });
+
+    describe('on home-trax-new-item', function() {
+      var controller;
+      beforeEach(function() {
+        controller = createController();
+        getDfd.resolve(testTimesheet);
+        $scope.$digest();
+        controller.currentDate = '2015-12-29';
+      });
+
+      describe('with current state app.timesheets.view', function() {
+        beforeEach(function() {
+          mockState.current.name = 'app.timesheets.view';
+        });
+
+        it('sets the current task timer to a new task time for the current timesheet', function() {
+          $rootScope.$broadcast('home-trax-new-item');
+          expect(angular.equals(controller.currentTaskTimer, {
+            workDate: '2015-12-29',
+            timesheetRid: 314159
+          })).to.be.true;
+        });
+
+        it('shows the task timer editor', function() {
+          $rootScope.$broadcast('home-trax-new-item');
+          expect(mockTaskTimerEditor.show.calledOnce).to.be.true;
+        });
+      });
+
+      describe('with current state app.timesheets.view', function() {
+        beforeEach(function() {
+          mockState.current.name = 'app.timesheets.viewCurrent';
+        });
+
+        it('sets the current task timer to a new task time for the current timesheet', function() {
+          $rootScope.$broadcast('home-trax-new-item');
+          expect(angular.equals(controller.currentTaskTimer, {
+            workDate: '2015-12-29',
+            timesheetRid: 314159
+          })).to.be.true;
+        });
+
+        it('shows the task timer editor', function() {
+          $rootScope.$broadcast('home-trax-new-item');
+          expect(mockTaskTimerEditor.show.calledOnce).to.be.true;
+        });
+      });
+
+      describe('with some other state', function() {
+        beforeEach(function() {
+          mockState.current.name = 'app.timesheets.list';
+        });
+
+        it('does nothing', function() {
+          $rootScope.$broadcast('home-trax-new-item');
+          expect(mockTaskTimerEditor.show.called).to.be.false;
+        });
       });
     });
 

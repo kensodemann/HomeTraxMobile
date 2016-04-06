@@ -15,6 +15,7 @@
     .config(function($stateProvider) {
       $stateProvider.state('app.timesheets.viewCurrent', {
           url: '/view',
+          htEnableNewItemMenuItem: true,
           views: {
             'timesheets': {
               templateUrl: 'app/timesheets/view/viewTimesheet.html',
@@ -25,6 +26,7 @@
         })
         .state('app.timesheets.view', {
           url: '/view/:id',
+          htEnableNewItemMenuItem: true,
           views: {
             'timesheets': {
               templateUrl: 'app/timesheets/view/viewTimesheet.html',
@@ -35,7 +37,7 @@
         });
     });
 
-  function ViewTimesheetController($scope, $interval, $window, $stateParams, $ionicModal, $q, timesheets,
+  function ViewTimesheetController($scope, $state, $interval, $window, $stateParams, $ionicModal, $q, timesheets,
                                    timesheetTaskTimers, TaskTimer) {
     var controller = this;
 
@@ -73,6 +75,11 @@
       $scope.$watch('controller.currentDate', refreshOnDateChange);
       $scope.$on('modal.hidden', refreshOnDialogHidden);
       $interval(refreshCurrentData, 15000);
+      $scope.$on('home-trax-new-item', function() {
+        if ($state.current.name === 'app.timesheets.viewCurrent' || $state.current.name === 'app.timesheets.view') {
+          createTaskTimer();
+        }
+      });
     }
 
     function createTaskTimerEditor() {
