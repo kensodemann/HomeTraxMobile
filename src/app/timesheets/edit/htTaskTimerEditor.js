@@ -2,6 +2,7 @@
   'use strict';
 
   angular.module('homeTrax.timesheets.edit.htTaskTimerEditor', [
+    'ngMessages',
     'homeTrax.common.core.EditorMode',
     'homeTrax.common.core.Status',
     'homeTrax.common.directives.htItemFinderDialog',
@@ -12,7 +13,8 @@
     'homeTrax.common.services.stages',
     'homeTrax.common.services.timesheetTaskTimers',
     'homeTrax.common.services.timeUtility',
-    'homeTrax.common.services.waitSpinner'
+    'homeTrax.common.services.waitSpinner',
+    'homeTrax.common.validations.validTimeFormat'
   ]).directive('htTaskTimerEditor', htTaskTimerEditor)
     .controller('htTaskTimerEditorController', HtTaskTimerEditorController);
 
@@ -32,7 +34,7 @@
     };
   }
 
-  function HtTaskTimerEditorController($scope, $ionicModal, Project, TaskTimer, stages, timesheetTaskTimers,
+  function HtTaskTimerEditorController($log, $scope, $ionicModal, Project, TaskTimer, stages, timesheetTaskTimers,
                                        waitSpinner, EditorMode, Status, hoursMinutesFilter, timeUtility) {
     var controller = this;
 
@@ -110,6 +112,8 @@
         fetchProjects();
         initializeEditor();
       }
+
+      $log.log($scope.taskTimerEditor.$error);
     }
 
     function fetchProjects() {

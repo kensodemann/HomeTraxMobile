@@ -6,17 +6,17 @@
 
     <form>
       <ion-list>
-        <label class="item item-input">
-          <span class="input-label">Username:</span>
+        <ion-input class="item item-input">
+          <ion-label>Username:</ion-label>
           <input type="text" ng-model="controller.username" ng-change="controller.clearErrorMessage()">
-        </label>
-        <label class="item item-input">
-          <span class="input-label">Password:</span>
+        </ion-input>
+        <ion-input class="item item-input">
+          <ion-label>Password:</ion-label>
           <input type="password" ng-model="controller.password" ng-change="controller.clearErrorMessage()">
-        </label>
-        <div class="item alert-danger" ng-show="!!controller.errorMessage">
+        </ion-input>
+        <ion-item class="text-center text-error" ng-show="!!controller.errorMessage">
           <span ng-bind="controller.errorMessage"></span>
-        </div>
+        </ion-item>
         <ion-item>
           <button class="button button-block button-positive"
                   ng-disabled="!controller.username || !controller.password"

@@ -54,6 +54,9 @@
     function summarizeData() {
       controller.summaryData = timeReportData.getSummaryData(timesheetTaskTimers.all);
       controller.dailySummaryData = timeReportData.getDailySummaryData(timesheetTaskTimers.all);
+      angular.forEach(controller.dailySummaryData, function(day) {
+        day.show = true;
+      });
     }
 
     function displayError(res) {

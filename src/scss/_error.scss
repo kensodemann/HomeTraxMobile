@@ -8,6 +8,10 @@
   border-bottom-color: $theme-danger;
   border-bottom-style: solid;
   border-bottom-width: 3px;
+
+  input{
+    max-width: 60px;
+  }
 }
 
 textarea.ng-invalid {

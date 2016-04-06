@@ -97,6 +97,14 @@
         expect(dailyData[4].date).to.equal('2015-12-04');
       });
 
+      it('summarizes the total hours by day', function(){
+        expect(dailyData[0].totalTime).to.equal(40849827);
+        expect(dailyData[1].totalTime).to.equal(67589732);
+        expect(dailyData[2].totalTime).to.equal(13500000);
+        expect(dailyData[3].totalTime).to.equal(91800000);
+        expect(dailyData[4].totalTime).to.equal(10800000);
+      });
+
       it('contains a list of summarized JIRA tasks for each day', function() {
         expect(dailyData[0].jiraTasks.length).to.equal(3);
         expect(dailyData[1].jiraTasks.length).to.equal(1);
