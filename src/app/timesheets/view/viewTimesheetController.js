@@ -8,8 +8,10 @@
     'homeTrax.common.directives.htTaskTimer',
     'homeTrax.common.filters.hoursMinutes',
     'homeTrax.common.resources.TaskTimer',
+    'homeTrax.common.services.messageDialog',
     'homeTrax.common.services.timesheets',
     'homeTrax.common.services.timesheetTaskTimers',
+    'homeTrax.common.services.waitSpinner',
     'homeTrax.timesheets.edit.htTaskTimerEditor'
   ]).controller('viewTimesheetController', ViewTimesheetController)
     .config(function($stateProvider) {
@@ -37,13 +39,14 @@
         });
     });
 
-  function ViewTimesheetController($scope, $state, $interval, $window, $stateParams, $ionicModal, $q, timesheets,
-                                   timesheetTaskTimers, TaskTimer) {
+  function ViewTimesheetController($scope, $state, $interval, $window, $stateParams, $ionicModal, $q, messageDialog,
+                                   timesheets, timesheetTaskTimers, TaskTimer, waitSpinner) {
     var controller = this;
 
     controller.currentTaskTimer = undefined;
 
     controller.createTaskTimer = createTaskTimer;
+    controller.deleteTaskTimer = deleteTaskTimer;
     controller.timerClicked = timerClicked;
     controller.timerToggled = timerToggled;
 
@@ -57,6 +60,20 @@
       }, controller.currentTaskTimer);
       controller.taskTimerEditor.show();
     }
+
+    function deleteTaskTimer(tt) {
+      messageDialog.ask('Are You Sure?', 'Are you sure you want to delete this timer?').then(processAnswer);
+
+      function processAnswer(doTheDelete) {
+        if (doTheDelete) {
+          waitSpinner.show();
+          timesheetTaskTimers.delete(tt)
+            .then(refreshCurrentData, displayError)
+            .finally(waitSpinner.hide);
+        }
+      }
+    }
+
 
     function timerClicked(timer) {
       controller.currentTaskTimer = timer;
@@ -131,6 +148,10 @@
     function refreshCurrentData() {
       controller.taskTimers = timesheetTaskTimers.get(controller.currentDate);
       controller.totalTime = timesheetTaskTimers.totalTime(controller.currentDate);
+    }
+
+    function displayError(res) {
+      messageDialog.error('Error', res.data.reason);
     }
   }
 }());

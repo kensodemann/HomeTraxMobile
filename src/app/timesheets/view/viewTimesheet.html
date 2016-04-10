@@ -9,10 +9,13 @@
                   ng-model="controller.currentDate"></ht-date-tabs>
   </div>
   <ion-content class="has-subheader">
-    <ion-item ng-repeat="tt in controller.taskTimers">
-      <ht-task-timer ng-model="tt" ht-clicked="controller.timerClicked(tt)"
-                     ht-toggled="controller.timerToggled(tt)"></ht-task-timer>
-    </ion-item>
+    <ion-list can-swipe="true">
+      <ion-item ng-repeat="tt in controller.taskTimers">
+        <ht-task-timer ng-model="tt" ht-clicked="controller.timerClicked(tt)"
+                       ht-toggled="controller.timerToggled(tt)"></ht-task-timer>
+        <ion-option-button class="button-default button-clear" ng-click="controller.deleteTaskTimer(tt)" style="font-size: 48px; padding-top: 41px"><span class="ion-trash-b"></span></ion-option-button>
+      </ion-item>
+    </ion-list>
   </ion-content>
   <ion-footer-bar>
     <div class="row">

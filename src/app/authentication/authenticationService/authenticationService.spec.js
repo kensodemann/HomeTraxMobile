@@ -22,10 +22,6 @@
       identity = _identity_;
     }));
 
-    beforeEach(inject(function($httpBackend) {
-      $httpBackend.whenGET(/.*currentUser.*/).respond(200, {});
-    }));
-
     beforeEach(function() {
       sinon.stub(authenticationToken, 'clear');
       sinon.stub(authenticationToken, 'set');

@@ -9,6 +9,7 @@
     'homeTrax.authentication.AuthenticationEvents',
     'homeTrax.authentication.authenticationInterceptor',
     'homeTrax.authentication.authenticationService',
+    'homeTrax.authentication.identity',
     'homeTrax.common.services.systemMenu',
     'homeTrax.login.loginController',
     'homeTrax.main.mainController',
@@ -37,7 +38,12 @@
         url: '/app',
         abstract: true,
         templateUrl: 'app/main/main.html',
-        controller: 'mainController as controller'
+        controller: 'mainController as controller',
+        resolve: {
+          currentUser: function(identity) {
+            return identity.get();
+          }
+        }
       });
   }
 
