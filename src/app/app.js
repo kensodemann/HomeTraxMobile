@@ -8,6 +8,7 @@
     'homeTrax.about.aboutController',
     'homeTrax.authentication.AuthenticationEvents',
     'homeTrax.authentication.authenticationInterceptor',
+    'homeTrax.authentication.authenticationService',
     'homeTrax.common.services.systemMenu',
     'homeTrax.login.loginController',
     'homeTrax.main.mainController',
@@ -20,6 +21,7 @@
     .run(initializePlatform)
     .run(inializeSystemMenu)
     .run(logStateChangeError)
+    .run(refreshLogin)
     .run(redirectWhenNotAuthenticated);
 
   function authentication($httpProvider) {
@@ -71,6 +73,12 @@
         m.enabled = !!toState.htEnableNewItemMenuItem;
       }
     });
+  }
+
+  function refreshLogin($interval, authenticationService){
+    var twentyMinutes = 20 * 60 * 1000;
+    authenticationService.refreshLogin();
+    $interval(authenticationService.refreshLogin, twentyMinutes);
   }
 
   function logStateChangeError($rootScope, $log) {

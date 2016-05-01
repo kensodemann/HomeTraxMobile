@@ -2,7 +2,8 @@
   'use strict';
 
   angular.module('homeTrax.authentication.authenticationToken', [
-    'LocalStorageModule'
+    'LocalStorageModule',
+    'homeTrax.common.core.config'
   ]).factory('authenticationToken', authenticationToken);
 
   function authenticationToken(localStorageService) {
@@ -10,23 +11,27 @@
     var cachedToken = null;
 
     return {
-      get: function() {
-        if (!cachedToken){
-          cachedToken = localStorageService.get(key);
-        }
-
-        return cachedToken;
-      },
-
-      set: function(value) {
-        localStorageService.set(key, value);
-        cachedToken = value;
-      },
-
-      clear: function() {
-        localStorageService.remove(key);
-        cachedToken = null;
-      }
+      get: getToken,
+      set: setToken,
+      clear: clearToken
     };
+
+    function getToken() {
+      if (!cachedToken) {
+        cachedToken = localStorageService.get(key);
+      }
+
+      return cachedToken;
+    }
+
+    function setToken(value) {
+      localStorageService.set(key, value);
+      cachedToken = value;
+    }
+
+    function clearToken() {
+      localStorageService.remove(key);
+      cachedToken = null;
+    }
   }
 }());
