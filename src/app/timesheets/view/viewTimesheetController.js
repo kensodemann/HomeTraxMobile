@@ -8,13 +8,16 @@
     'homeTrax.common.directives.htTaskTimer',
     'homeTrax.common.filters.hoursMinutes',
     'homeTrax.common.resources.TaskTimer',
+    'homeTrax.common.services.messageDialog',
     'homeTrax.common.services.timesheets',
     'homeTrax.common.services.timesheetTaskTimers',
+    'homeTrax.common.services.waitSpinner',
     'homeTrax.timesheets.edit.htTaskTimerEditor'
   ]).controller('viewTimesheetController', ViewTimesheetController)
     .config(function($stateProvider) {
       $stateProvider.state('app.timesheets.viewCurrent', {
           url: '/view',
+          htEnableNewItemMenuItem: true,
           views: {
             'timesheets': {
               templateUrl: 'app/timesheets/view/viewTimesheet.html',
@@ -25,6 +28,7 @@
         })
         .state('app.timesheets.view', {
           url: '/view/:id',
+          htEnableNewItemMenuItem: true,
           views: {
             'timesheets': {
               templateUrl: 'app/timesheets/view/viewTimesheet.html',
@@ -35,13 +39,14 @@
         });
     });
 
-  function ViewTimesheetController($scope, $interval, $window, $stateParams, $ionicModal, $q, timesheets,
-                                   timesheetTaskTimers, TaskTimer) {
+  function ViewTimesheetController($scope, $state, $interval, $window, $stateParams, $ionicModal, $q, messageDialog,
+                                   timesheets, timesheetTaskTimers, TaskTimer, waitSpinner) {
     var controller = this;
 
     controller.currentTaskTimer = undefined;
 
     controller.createTaskTimer = createTaskTimer;
+    controller.deleteTaskTimer = deleteTaskTimer;
     controller.timerClicked = timerClicked;
     controller.timerToggled = timerToggled;
 
@@ -55,6 +60,20 @@
       }, controller.currentTaskTimer);
       controller.taskTimerEditor.show();
     }
+
+    function deleteTaskTimer(tt) {
+      messageDialog.ask('Are You Sure?', 'Are you sure you want to delete this timer?').then(processAnswer);
+
+      function processAnswer(doTheDelete) {
+        if (doTheDelete) {
+          waitSpinner.show();
+          timesheetTaskTimers.delete(tt)
+            .then(refreshCurrentData, displayError)
+            .finally(waitSpinner.hide);
+        }
+      }
+    }
+
 
     function timerClicked(timer) {
       controller.currentTaskTimer = timer;
@@ -73,6 +92,11 @@
       $scope.$watch('controller.currentDate', refreshOnDateChange);
       $scope.$on('modal.hidden', refreshOnDialogHidden);
       $interval(refreshCurrentData, 15000);
+      $scope.$on('home-trax-new-item', function() {
+        if ($state.current.name === 'app.timesheets.viewCurrent' || $state.current.name === 'app.timesheets.view') {
+          createTaskTimer();
+        }
+      });
     }
 
     function createTaskTimerEditor() {
@@ -124,6 +148,10 @@
     function refreshCurrentData() {
       controller.taskTimers = timesheetTaskTimers.get(controller.currentDate);
       controller.totalTime = timesheetTaskTimers.totalTime(controller.currentDate);
+    }
+
+    function displayError(res) {
+      messageDialog.error('Error', res.data.reason);
     }
   }
 }());

@@ -19,8 +19,6 @@
       isAuthorized: isAuthorized
     };
 
-    service.get();
-
     return service;
 
     function getCurrentUser() {

@@ -38,26 +38,9 @@
       $rootScope = _$rootScope_;
     }));
 
-    beforeEach(function() {
-      httpBackend.expectGET(config.dataService + '/currentUser?_=SomeBusterOfCache').respond({
-        _id: 0,
-        name: 'The Initially Fetched User'
-      });
-      httpBackend.flush();
-    });
-
     afterEach(function() {
       httpBackend.verifyNoOutstandingExpectation();
       httpBackend.verifyNoOutstandingRequest();
-    });
-
-    describe('instantiation', function() {
-      it('attempts to get the current user', function() {
-        expect(identity.currentUser).to.deep.equal({
-          _id: 0,
-          name: 'The Initially Fetched User'
-        });
-      });
     });
 
     describe('get', function() {

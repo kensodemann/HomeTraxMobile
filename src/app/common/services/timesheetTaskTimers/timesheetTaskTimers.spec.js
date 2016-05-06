@@ -11,7 +11,7 @@
 
     var clock;
     var config;
-    var httpBackend;
+    var $httpBackend;
     var scope;
 
     beforeEach(module('homeTrax.common.services.timesheetTaskTimers'));
@@ -31,8 +31,8 @@
       });
     });
 
-    beforeEach(inject(function($rootScope, $httpBackend, _timesheetTaskTimers_, _config_) {
-      httpBackend = $httpBackend;
+    beforeEach(inject(function($rootScope, _$httpBackend_, _timesheetTaskTimers_, _config_) {
+      $httpBackend = _$httpBackend_;
       scope = $rootScope;
       timesheetTaskTimers = _timesheetTaskTimers_;
       config = _config_;
@@ -43,8 +43,8 @@
     });
 
     afterEach(function() {
-      httpBackend.verifyNoOutstandingExpectation();
-      httpBackend.verifyNoOutstandingRequest();
+      $httpBackend.verifyNoOutstandingExpectation();
+      $httpBackend.verifyNoOutstandingRequest();
     });
 
     afterEach(function() {
@@ -57,13 +57,13 @@
 
     describe('load', function() {
       beforeEach(function() {
-        httpBackend.expectGET(config.dataService + '/timesheets/4273314159/taskTimers')
+        $httpBackend.expectGET(config.dataService + '/timesheets/4273314159/taskTimers')
           .respond(testTaskTimers);
       });
 
       it('loads the data for the specified timesheet', function() {
         timesheetTaskTimers.load(testTimesheet);
-        httpBackend.flush();
+        $httpBackend.flush();
       });
 
       it('sets all to the results of the load', function(done) {
@@ -72,16 +72,16 @@
           done();
         });
 
-        httpBackend.flush();
+        $httpBackend.flush();
       });
     });
 
     describe('get task timers', function() {
       beforeEach(function() {
-        httpBackend.expectGET(config.dataService + '/timesheets/4273314159/taskTimers')
+        $httpBackend.expectGET(config.dataService + '/timesheets/4273314159/taskTimers')
           .respond(testTaskTimers);
         timesheetTaskTimers.load(testTimesheet);
-        httpBackend.flush();
+        $httpBackend.flush();
       });
 
       it('returns task timers for the day specified', function() {
@@ -98,10 +98,10 @@
         testTaskTimers[1].isActive = true;
         testTaskTimers[1].startTime = 1000;
         clock.tick(3000);
-        httpBackend.expectGET(config.dataService + '/timesheets/4273314159/taskTimers')
+        $httpBackend.expectGET(config.dataService + '/timesheets/4273314159/taskTimers')
           .respond(testTaskTimers);
         timesheetTaskTimers.load(testTimesheet);
-        httpBackend.flush();
+        $httpBackend.flush();
       });
 
       it('gets the total time for the specified day using elapsed time', function() {
@@ -120,10 +120,10 @@
 
     describe('create new task timer', function() {
       beforeEach(function() {
-        httpBackend.expectGET(config.dataService + '/timesheets/4273314159/taskTimers')
+        $httpBackend.expectGET(config.dataService + '/timesheets/4273314159/taskTimers')
           .respond(testTaskTimers);
         timesheetTaskTimers.load(testTimesheet);
-        httpBackend.flush();
+        $httpBackend.flush();
       });
 
       it('references the current timesheet', function() {
@@ -139,10 +139,10 @@
 
     describe('adding a task timer', function() {
       beforeEach(function() {
-        httpBackend.expectGET(config.dataService + '/timesheets/4273314159/taskTimers')
+        $httpBackend.expectGET(config.dataService + '/timesheets/4273314159/taskTimers')
           .respond(testTaskTimers);
         timesheetTaskTimers.load(testTimesheet);
-        httpBackend.flush();
+        $httpBackend.flush();
       });
 
       it('adds the specified task timer to the end of the list', function() {
@@ -158,12 +158,67 @@
       });
     });
 
-    describe('starting a task timer', function() {
+    describe('deleting a tak timer', function() {
       beforeEach(function() {
-        httpBackend.expectGET(config.dataService + '/timesheets/4273314159/taskTimers')
+        $httpBackend.expectGET(config.dataService + '/timesheets/4273314159/taskTimers')
           .respond(testTaskTimers);
         timesheetTaskTimers.load(testTimesheet);
-        httpBackend.flush();
+        $httpBackend.flush();
+      });
+
+      it('deletes the task timer', function() {
+        $httpBackend.expectDELETE(config.dataService + '/timesheets/4273314159/taskTimers/12344').respond();
+        timesheetTaskTimers.delete(timesheetTaskTimers.all[3]);
+        $httpBackend.flush();
+      });
+
+      it('returns the promise of the delete', function() {
+        $httpBackend.expectDELETE(config.dataService + '/timesheets/4273314159/taskTimers/12344').respond(400, {
+          reason: 'I just do not like you much'
+        });
+        var result = 0;
+        timesheetTaskTimers.delete(timesheetTaskTimers.all[3]).catch(function(res) {
+          result = res;
+        });
+
+        $httpBackend.flush();
+        expect(result.status).to.equal(400);
+
+        $httpBackend.expectDELETE(config.dataService + '/timesheets/4273314159/taskTimers/12344').respond();
+        timesheetTaskTimers.delete(timesheetTaskTimers.all[3]).then(function() {
+          result = 'Deleted';
+        });
+
+        $httpBackend.flush();
+        expect(result).to.equal('Deleted');
+      });
+
+      it('removes the task timer from the list if the delete succeeds', function() {
+        $httpBackend.expectDELETE(config.dataService + '/timesheets/4273314159/taskTimers/12344').respond();
+        timesheetTaskTimers.delete(timesheetTaskTimers.all[3]);
+        $httpBackend.flush();
+        expect(timesheetTaskTimers.all.length).to.equal(6);
+        expect(_.find(timesheetTaskTimers.all, function(item) {
+          return item._id === 12344;
+        })).to.be.undefined;
+      });
+
+      it('does not remove the task timer from the list if the delete fails', function() {
+        $httpBackend.expectDELETE(config.dataService + '/timesheets/4273314159/taskTimers/12344').respond(400, {
+          reason: 'I just do not like you much'
+        });
+        timesheetTaskTimers.delete(timesheetTaskTimers.all[3]);
+        $httpBackend.flush();
+        expect(angular.equals(timesheetTaskTimers.all, testTaskTimers)).to.be.true;
+      });
+    });
+
+    describe('starting a task timer', function() {
+      beforeEach(function() {
+        $httpBackend.expectGET(config.dataService + '/timesheets/4273314159/taskTimers')
+          .respond(testTaskTimers);
+        timesheetTaskTimers.load(testTimesheet);
+        $httpBackend.flush();
       });
 
       it('throws an error if the task timer is not in the current cache', function() {
@@ -180,7 +235,7 @@
       it('stops any timer in the cache that is currently running', function() {
         timesheetTaskTimers.all[2].isActive = true;
         timesheetTaskTimers.all[4].isActive = true;
-        httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12343/stop')
+        $httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12343/stop')
           .respond({
             _id: 12343,
             timesheetRid: 4273314159,
@@ -188,7 +243,7 @@
             isActive: false,
             milliseconds: 4887000
           });
-        httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12345/stop')
+        $httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12345/stop')
           .respond({
             _id: 12345,
             timesheetRid: 4273314159,
@@ -196,11 +251,11 @@
             isActive: false,
             milliseconds: 3746000
           });
-        httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12344/start')
+        $httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12344/start')
           .respond();
 
         timesheetTaskTimers.start(timesheetTaskTimers.all[3]);
-        httpBackend.flush();
+        $httpBackend.flush();
 
         expect(timesheetTaskTimers.all[2].isActive).to.be.false;
         expect(timesheetTaskTimers.all[4].isActive).to.be.false;
@@ -209,7 +264,7 @@
       it('copies the new running time for any stopped timer', function() {
         timesheetTaskTimers.all[2].isActive = true;
         timesheetTaskTimers.all[4].isActive = true;
-        httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12343/stop')
+        $httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12343/stop')
           .respond({
             _id: 12343,
             timesheetRid: 4273314159,
@@ -217,7 +272,7 @@
             isActive: false,
             milliseconds: 4887000
           });
-        httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12345/stop')
+        $httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12345/stop')
           .respond({
             _id: 12345,
             timesheetRid: 4273314159,
@@ -225,18 +280,18 @@
             isActive: false,
             milliseconds: 3746000
           });
-        httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12344/start')
+        $httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12344/start')
           .respond();
 
         timesheetTaskTimers.start(timesheetTaskTimers.all[3]);
-        httpBackend.flush();
+        $httpBackend.flush();
 
         expect(timesheetTaskTimers.all[2].milliseconds).to.equal(4887000);
         expect(timesheetTaskTimers.all[4].milliseconds).to.equal(3746000);
       });
 
       it('starts the requested timer', function() {
-        httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12343/start')
+        $httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12343/start')
           .respond({
             _id: 12343,
             workDate: '2015-10-14',
@@ -244,13 +299,13 @@
             isActive: true
           });
         timesheetTaskTimers.start(timesheetTaskTimers.all[2]);
-        httpBackend.flush();
+        $httpBackend.flush();
 
         expect(timesheetTaskTimers.all[2].isActive).to.be.true;
       });
 
       it('copies the start time', function() {
-        httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12343/start')
+        $httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12343/start')
           .respond({
             _id: 12343,
             workDate: '2015-10-14',
@@ -259,7 +314,7 @@
             isActive: true
           });
         timesheetTaskTimers.start(timesheetTaskTimers.all[2]);
-        httpBackend.flush();
+        $httpBackend.flush();
 
         expect(timesheetTaskTimers.all[2].startTime).to.equal(1448894563156);
       });
@@ -267,10 +322,10 @@
 
     describe('stoping a task timer', function() {
       beforeEach(function() {
-        httpBackend.expectGET(config.dataService + '/timesheets/4273314159/taskTimers')
+        $httpBackend.expectGET(config.dataService + '/timesheets/4273314159/taskTimers')
           .respond(testTaskTimers);
         timesheetTaskTimers.load(testTimesheet);
-        httpBackend.flush();
+        $httpBackend.flush();
       });
 
       it('throws an error if the task timer is not in the current cache', function() {
@@ -286,7 +341,7 @@
 
       it('stops the requested timer', function() {
         timesheetTaskTimers.all[2].isActive = true;
-        httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12343/stop')
+        $httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12343/stop')
           .respond({
             _id: 12343,
             workDate: '2015-10-14',
@@ -294,14 +349,14 @@
             isActive: false
           });
         timesheetTaskTimers.stop(timesheetTaskTimers.all[2]);
-        httpBackend.flush();
+        $httpBackend.flush();
 
         expect(timesheetTaskTimers.all[2].isActive).to.be.false;
       });
 
       it('copies the new running time for any stopped timer', function() {
         timesheetTaskTimers.all[2].isActive = true;
-        httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12343/stop')
+        $httpBackend.expectPOST(config.dataService + '/timesheets/4273314159/taskTimers/12343/stop')
           .respond({
             _id: 12343,
             workDate: '2015-10-14',
@@ -309,7 +364,7 @@
             isActive: false
           });
         timesheetTaskTimers.stop(timesheetTaskTimers.all[2]);
-        httpBackend.flush();
+        $httpBackend.flush();
 
         expect(timesheetTaskTimers.all[2].milliseconds).to.equal(4887000);
       });

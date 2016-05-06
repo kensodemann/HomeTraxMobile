@@ -7,9 +7,11 @@
     var mockModalController;
     var mockProjectEditor;
     var mockProjectEditorConstructor;
+    var mockState;
     var mockWaitSpinner;
 
     var config;
+    var $rootScope;
     var $scope;
     var Status;
     var testData;
@@ -23,10 +25,11 @@
       initializeTestData();
     });
 
-    beforeEach(inject(function($rootScope, $controller, _$httpBackend_, _config_, _Status_) {
+    beforeEach(inject(function(_$rootScope_, $controller, _$httpBackend_, _config_, _Status_) {
       $controllerConstructor = $controller;
       $httpBackend = _$httpBackend_;
       config = _config_;
+      $rootScope = _$rootScope_;
       $scope = $rootScope.$new();
       Status = _Status_;
     }));
@@ -71,6 +74,14 @@
       mockIonicModal.fromTemplate.returns(mockModalController);
     });
 
+    beforeEach(function() {
+      mockState = {
+        current: {
+          name: 'app.projects.list'
+        }
+      };
+    });
+
     afterEach(function() {
       $httpBackend.verifyNoOutstandingExpectation();
       $httpBackend.verifyNoOutstandingRequest();
@@ -79,6 +90,7 @@
     function createController() {
       return $controllerConstructor('listProjectsController', {
         $scope: $scope,
+        $state: mockState,
         ProjectEditor: mockProjectEditorConstructor,
         waitSpinner: mockWaitSpinner,
         $ionicModal: mockIonicModal
@@ -169,6 +181,31 @@
       it('shows the editor', function() {
         controller.create();
         expect(mockModalController.show.calledOnce).to.be.true;
+      });
+    });
+
+    describe('on home-trax-new-item', function() {
+      var controller;
+      beforeEach(function() {
+        $httpBackend.expectGET(config.dataService + '/projects').respond(200, testData);
+        controller = createController();
+        $httpBackend.flush();
+      });
+
+      it('sets the current project to a new active project', function() {
+        $rootScope.$broadcast('home-trax-new-item');
+        expect(angular.equals(controller.currentProject, {status: Status.active})).to.be.true;
+      });
+
+      it('shows the editor', function() {
+        $rootScope.$broadcast('home-trax-new-item');
+        expect(mockModalController.show.calledOnce).to.be.true;
+      });
+
+      it('does nothing if the state is not correct', function() {
+        mockState.current.name = 'app.something.else';
+        $rootScope.$broadcast('home-trax-new-item');
+        expect(mockModalController.show.called).to.be.false;
       });
     });
 

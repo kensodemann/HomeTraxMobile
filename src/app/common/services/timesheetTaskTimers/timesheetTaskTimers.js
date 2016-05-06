@@ -19,6 +19,7 @@
       totalTime: getTotalTime,
       create: newTaskTimer,
       add: addTaskTimer,
+      delete: deleteTaskTimer,
       start: startTaskTimer,
       stop: stopTaskTimer
     };
@@ -57,6 +58,20 @@
 
     function addTaskTimer(tt) {
       service.all.push(tt);
+    }
+
+    function deleteTaskTimer(tt) {
+      return tt.$delete().then(removeFromAll);
+
+      function removeFromAll() {
+        var idx = _.findIndex(service.all, function(item) {
+          return item._id === tt._id;
+        });
+
+        if (idx > -1) {
+          service.all.splice(idx, 1);
+        }
+      }
     }
 
     function startTaskTimer(tt) {

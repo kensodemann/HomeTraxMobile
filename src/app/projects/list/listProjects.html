@@ -9,14 +9,13 @@
   </ion-header-bar>
 
   <ion-content class="has-subheader">
-    <ion-scroll>
+    <ion-list>
       <ion-item ng-repeat="item in controller.projects | filter: controller.searchText"
                 ng-show="item.status === 'active' || controller.showInactive"
                 ng-class="{inactive: item.status === 'inactive'}"
                 ng-click="controller.edit(item)">
         <ng-include src="'app/common/templates/projectListItem.html'"></ng-include>
       </ion-item>
-    </ion-scroll>
     </ion-list>
   </ion-content>
 

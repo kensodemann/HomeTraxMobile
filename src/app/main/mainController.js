@@ -3,16 +3,13 @@
 
   angular.module('homeTrax.main.mainController', [
     'ui.router',
-    'homeTrax.authentication.authenticationService',
-    'homeTrax.common.services.systemMenu'
+    'homeTrax.authentication.authenticationService'
   ]).controller('mainController', MainController);
 
-  function MainController($state, authenticationService, systemMenu) {
+  function MainController($state, authenticationService) {
     var controller = this;
 
     controller.logout = logout;
-
-    systemMenu.initialize();
 
     function logout() {
       authenticationService.logoutUser();
