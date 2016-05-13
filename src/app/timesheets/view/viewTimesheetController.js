@@ -2,18 +2,18 @@
   'use strict';
 
   angular.module('homeTrax.timesheets.view.viewTimesheetController', [
-    'ui.router',
-    'homeTrax.common.core.config',
-    'homeTrax.common.directives.htDateTabs',
-    'homeTrax.common.directives.htTaskTimer',
-    'homeTrax.common.filters.hoursMinutes',
-    'homeTrax.common.resources.TaskTimer',
-    'homeTrax.common.services.messageDialog',
-    'homeTrax.common.services.timesheets',
-    'homeTrax.common.services.timesheetTaskTimers',
-    'homeTrax.common.services.waitSpinner',
-    'homeTrax.timesheets.edit.htTaskTimerEditor'
-  ]).controller('viewTimesheetController', ViewTimesheetController)
+      'ui.router',
+      'homeTrax.common.core.config',
+      'homeTrax.common.directives.htDateTabs',
+      'homeTrax.common.directives.htTaskTimer',
+      'homeTrax.common.filters.hoursMinutes',
+      'homeTrax.common.resources.TaskTimer',
+      'homeTrax.common.services.messageDialog',
+      'homeTrax.common.services.timesheets',
+      'homeTrax.common.services.timesheetTaskTimers',
+      'homeTrax.common.services.waitSpinner',
+      'homeTrax.timesheets.edit.htTaskTimerEditor'
+    ]).controller('viewTimesheetController', ViewTimesheetController)
     .config(function($stateProvider) {
       $stateProvider.state('app.timesheets.viewCurrent', {
           url: '/view',
@@ -40,7 +40,7 @@
     });
 
   function ViewTimesheetController($scope, $state, $interval, $window, $stateParams, $ionicModal, $q, messageDialog,
-                                   timesheets, timesheetTaskTimers, TaskTimer, waitSpinner) {
+    timesheets, timesheetTaskTimers, TaskTimer, waitSpinner) {
     var controller = this;
 
     controller.currentTaskTimer = undefined;
@@ -112,17 +112,12 @@
     }
 
     function getTimesheet() {
-      var dfd = $q.defer();
-
-      var p = (!!$stateParams.id ? timesheets.get($stateParams.id) : timesheets.getCurrent());
-      p.then(getTaskTimers, dfd.reject);
-
-      return dfd.promise;
+      return (!!$stateParams.id ? timesheets.get($stateParams.id) : timesheets.getCurrent()).then(getTaskTimers);
 
       function getTaskTimers(ts) {
         controller.timesheet = ts;
         controller.currentDate = defaultDate();
-        timesheetTaskTimers.load(ts).then(dfd.resolve, dfd.reject);
+        return timesheetTaskTimers.load(ts);
       }
     }
 
@@ -146,8 +141,10 @@
     }
 
     function refreshCurrentData() {
-      controller.taskTimers = timesheetTaskTimers.get(controller.currentDate);
-      controller.totalTime = timesheetTaskTimers.totalTime(controller.currentDate);
+      timesheetTaskTimers.load(controller.timesheet).then(function() {
+        controller.taskTimers = timesheetTaskTimers.get(controller.currentDate);
+        controller.totalTime = timesheetTaskTimers.totalTime(controller.currentDate);
+      });
     }
 
     function displayError(res) {

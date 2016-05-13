@@ -9,7 +9,6 @@
     var testTimesheet;
     var testTaskTimers;
 
-    var clock;
     var config;
     var $httpBackend;
     var scope;
@@ -22,8 +21,7 @@
 
     beforeEach(function() {
       mockFoo = sinon.stub({
-        bar: function() {
-        }
+        bar: function() {}
       });
 
       module(function($provide) {
@@ -38,17 +36,9 @@
       config = _config_;
     }));
 
-    beforeEach(function() {
-      clock = sinon.useFakeTimers();
-    });
-
     afterEach(function() {
       $httpBackend.verifyNoOutstandingExpectation();
       $httpBackend.verifyNoOutstandingRequest();
-    });
-
-    afterEach(function() {
-      clock.restore();
     });
 
     it('exists', function() {
@@ -97,7 +87,7 @@
       beforeEach(function() {
         testTaskTimers[1].isActive = true;
         testTaskTimers[1].startTime = 1000;
-        clock.tick(3000);
+        testTaskTimers[1]._currentTime = 3000;
         $httpBackend.expectGET(config.dataService + '/timesheets/4273314159/taskTimers')
           .respond(testTaskTimers);
         timesheetTaskTimers.load(testTimesheet);
