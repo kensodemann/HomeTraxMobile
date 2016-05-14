@@ -109,7 +109,7 @@
       var controller;
       beforeEach(function() {
         $scope.taskTimer = {};
-        var el = compile('<ht-task-timer-editor ng-model="taskTimer"></ht-task-timer-editor>');
+        var el = compile('<ht-task-timer-editor ht-task-timer="taskTimer"></ht-task-timer-editor>');
         controller = el.isolateScope().controller;
         $httpBackend.flush();
       });
@@ -141,7 +141,7 @@
           status: 'active'
         };
         $scope.dialog = {};
-        var el = compile('<ht-task-timer-editor ht-dialog="dialog" ng-model="taskTimer"></ht-task-timer-editor>');
+        var el = compile('<ht-task-timer-editor ht-dialog="dialog" ht-task-timer="taskTimer"></ht-task-timer-editor>');
         controller = el.isolateScope().controller;
         $httpBackend.flush();
       });
@@ -219,7 +219,7 @@
         $scope.dialog = {
           hide: sinon.stub()
         };
-        var el = compile('<ht-task-timer-editor ht-dialog="dialog" ng-model="taskTimer"></ht-task-timer-editor>');
+        var el = compile('<ht-task-timer-editor ht-dialog="dialog" ht-task-timer="taskTimer"></ht-task-timer-editor>');
         controller = el.isolateScope().controller;
         $httpBackend.expectGET(config.dataService + '/projects?status=active').respond(200, testProjects);
         $scope.$broadcast('modal.shown', $scope.dialog);
@@ -345,7 +345,7 @@
         $scope.dialog = {
           hide: sinon.stub()
         };
-        var el = compile('<ht-task-timer-editor ht-dialog="dialog" ng-model="taskTimer"></ht-task-timer-editor>');
+        var el = compile('<ht-task-timer-editor ht-dialog="dialog" ht-task-timer="taskTimer"></ht-task-timer-editor>');
         controller = el.isolateScope().controller;
         $httpBackend.expectGET(config.dataService + '/projects?status=active').respond(200, testProjects);
         $scope.$broadcast('modal.shown', $scope.dialog);

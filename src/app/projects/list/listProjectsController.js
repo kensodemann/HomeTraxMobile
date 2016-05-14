@@ -30,7 +30,7 @@
     controller.edit = editProject;
     controller.create = createProject;
 
-    controller.currentProject = {};
+    controller.currentProject = undefined;
 
     activate();
 

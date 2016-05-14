@@ -24,8 +24,7 @@
       templateUrl: 'app/timesheets/edit/htTaskTimerEditor.html',
       scope: {},
       bindToController: {
-        htTaskTimer: '=ngModel',
-        htModel: '=',
+        htTaskTimer: '=',
         htTaskTimers: '=',
         htDialog: '='
       },

@@ -53,11 +53,10 @@
     activate();
 
     function createTaskTimer() {
-      controller.currentTaskTimer = new TaskTimer();
-      angular.copy({
+      controller.currentTaskTimer = new TaskTimer({
         workDate: controller.currentDate,
         timesheetRid: controller.timesheet._id
-      }, controller.currentTaskTimer);
+      });
       controller.taskTimerEditor.show();
     }
 
@@ -100,7 +99,7 @@
     }
 
     function createTaskTimerEditor() {
-      var template = '<ion-modal-view><ht-task-timer-editor ht-dialog="controller.taskTimerEditor" ng-model="controller.currentTaskTimer"></ht-task-timer-editor></ion-modal-view>';
+      var template = '<ion-modal-view><ht-task-timer-editor ht-dialog="controller.taskTimerEditor" ht-task-timer="controller.currentTaskTimer"></ht-task-timer-editor></ion-modal-view>';
       controller.taskTimerEditor = $ionicModal.fromTemplate(template, {
         scope: $scope,
         backdropClickToClose: false,
