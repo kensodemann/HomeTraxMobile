@@ -2,30 +2,30 @@
   'use strict';
 
   angular.module('homeTrax.timesheets.view.viewTimesheetController', [
-      'ui.router',
-      'homeTrax.common.core.config',
-      'homeTrax.common.directives.htDateTabs',
-      'homeTrax.common.directives.htTaskTimer',
-      'homeTrax.common.filters.hoursMinutes',
-      'homeTrax.common.resources.TaskTimer',
-      'homeTrax.common.services.messageDialog',
-      'homeTrax.common.services.timesheets',
-      'homeTrax.common.services.timesheetTaskTimers',
-      'homeTrax.common.services.waitSpinner',
-      'homeTrax.timesheets.edit.htTaskTimerEditor'
-    ]).controller('viewTimesheetController', ViewTimesheetController)
+    'ui.router',
+    'homeTrax.common.core.config',
+    'homeTrax.common.directives.htDateTabs',
+    'homeTrax.common.directives.htTaskTimer',
+    'homeTrax.common.filters.hoursMinutes',
+    'homeTrax.common.resources.TaskTimer',
+    'homeTrax.common.services.messageDialog',
+    'homeTrax.common.services.timesheets',
+    'homeTrax.common.services.timesheetTaskTimers',
+    'homeTrax.common.services.waitSpinner',
+    'homeTrax.timesheets.edit.htTaskTimerEditor'
+  ]).controller('viewTimesheetController', ViewTimesheetController)
     .config(function($stateProvider) {
       $stateProvider.state('app.timesheets.viewCurrent', {
-          url: '/view',
-          htEnableNewItemMenuItem: true,
-          views: {
-            'timesheets': {
-              templateUrl: 'app/timesheets/view/viewTimesheet.html',
-              controller: 'viewTimesheetController',
-              controllerAs: 'controller'
-            }
+        url: '/view',
+        htEnableNewItemMenuItem: true,
+        views: {
+          'timesheets': {
+            templateUrl: 'app/timesheets/view/viewTimesheet.html',
+            controller: 'viewTimesheetController',
+            controllerAs: 'controller'
           }
-        })
+        }
+      })
         .state('app.timesheets.view', {
           url: '/view/:id',
           htEnableNewItemMenuItem: true,
@@ -89,7 +89,7 @@
       getTimesheet().then(refreshCurrentData);
       createTaskTimerEditor();
       $scope.$watch('controller.currentDate', refreshOnDateChange);
-      $scope.$on('modal.hidden', refreshOnDialogHidden);
+      $scope.$on('modal.hidden', handleEditorDialogHidden);
       $interval(refreshCurrentData, 15000);
       $scope.$on('home-trax-new-item', function() {
         if ($state.current.name === 'app.timesheets.viewCurrent' || $state.current.name === 'app.timesheets.view') {
@@ -133,8 +133,9 @@
       }
     }
 
-    function refreshOnDialogHidden(evt, dialog) {
+    function handleEditorDialogHidden(evt, dialog) {
       if (dialog === controller.taskTimerEditor) {
+        controller.currentTaskTimer = undefined;
         refreshCurrentData();
       }
     }
@@ -150,4 +151,4 @@
       messageDialog.error('Error', res.data.reason);
     }
   }
-}());
+} ());

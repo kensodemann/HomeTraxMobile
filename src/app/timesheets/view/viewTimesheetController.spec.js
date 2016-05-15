@@ -67,15 +67,15 @@
 
     beforeEach(function() {
       mockTaskTimerEditor = sinon.stub({
-        show: function() {},
+        show: function() { },
 
-        remove: function() {}
+        remove: function() { }
       });
     });
 
     beforeEach(function() {
       mockIonicModal = sinon.stub({
-        fromTemplate: function() {}
+        fromTemplate: function() { }
       });
       mockIonicModal.fromTemplate.returns(mockTaskTimerEditor);
     });
@@ -314,6 +314,13 @@
           expect(timesheetTaskTimers.get.calledWith('2015-12-31')).to.be.true;
           expect(timesheetTaskTimers.totalTime.calledOnce).to.be.true;
           expect(timesheetTaskTimers.totalTime.calledWith('2015-12-31')).to.be.true;
+        });
+
+        it('sets current task timer undefind', function() {
+          controller.currentTaskTimer = { _id: 42 };
+          $scope.$broadcast('modal.hidden', controller.taskTimerEditor);
+          $scope.$digest();
+          expect(controller.currentTaskTimer).to.be.undefined;
         });
       });
     });
@@ -679,18 +686,18 @@
         _id: 2,
         name: 'Test Data #1'
       }, {
-        _id: 3,
-        name: 'Test Data #1'
-      }, {
-        _id: 5,
-        name: 'Test Data #1'
-      }, {
-        _id: 7,
-        name: 'Test Data #1'
-      }, {
-        _id: 11,
-        name: 'Test Data #1'
-      }];
+          _id: 3,
+          name: 'Test Data #1'
+        }, {
+          _id: 5,
+          name: 'Test Data #1'
+        }, {
+          _id: 7,
+          name: 'Test Data #1'
+        }, {
+          _id: 11,
+          name: 'Test Data #1'
+        }];
     }
   });
-}());
+} ());

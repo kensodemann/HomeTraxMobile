@@ -131,78 +131,98 @@
       });
     });
 
-    describe('when shown', function() {
+    describe('when the task timer changes', function() {
       var controller;
       beforeEach(function() {
-        $scope.taskTimer = {
-          _id: '24',
-          name: 'I am a fake task',
-          milliseconds: 1380000,
-          status: 'active'
-        };
         $scope.dialog = {};
         var el = compile('<ht-task-timer-editor ht-dialog="dialog" ht-task-timer="taskTimer"></ht-task-timer-editor>');
         controller = el.isolateScope().controller;
-        $httpBackend.flush();
+        $httpBackend.expectGET(config.dataService + '/projects?status=active').respond(200, testProjects);
       });
 
-      describe('this dialog', function() {
+      describe('to an existing used task timer', function() {
         beforeEach(function() {
-          $httpBackend.expectGET(config.dataService + '/projects?status=active').respond(200, testProjects);
+          $scope.taskTimer = {
+            _id: '24',
+            name: 'I am a fake task',
+            milliseconds: 1380000,
+            status: 'active'
+          };
+          $scope.$digest();
+          $httpBackend.flush();
         });
 
-        it('fetches the active projects and assigns them to the controller project list', function() {
-          $scope.$broadcast('modal.shown', $scope.dialog);
-          $httpBackend.flush();
+        it('assigns the fetched projects to the controller project list', function() {
           expect(angular.equals(controller.projects, testProjects)).to.be.true;
         });
 
         it('copies the timer to the editor model', function() {
-          $scope.$broadcast('modal.shown', $scope.dialog);
-          $httpBackend.flush();
           expect(controller.editModel).to.not.equal($scope.taskTimer);
           expect(angular.equals(controller.editModel, $scope.taskTimer)).to.be.true;
         });
 
-        it('sets the title to "Modify Timer" if the model has an _id', function() {
-          $scope.$broadcast('modal.shown', $scope.dialog);
-          $httpBackend.flush();
+        it('sets the title to "Modify Timer"', function() {
           expect(controller.title).to.equal('Modify Timer');
         });
 
-        it('sets the title to "New Timer" if the model does not have an _id', function() {
-          $scope.taskTimer = {
-            status: 'active'
-          };
-          $scope.$digest();
-          $scope.$broadcast('modal.shown', $scope.dialog);
-          $httpBackend.flush();
-          expect(controller.title).to.equal('New Timer');
-        });
-
         it('sets the time spent correctly', function() {
-          $scope.$broadcast('modal.shown', $scope.dialog);
-          $httpBackend.flush();
           expect(controller.timeSpent).to.equal('0:23');
         });
+      });
 
-        it('does not set the time spent if there is no time spent', function() {
+      describe('to an existing unused task timer', function() {
+        beforeEach(function() {
           $scope.taskTimer = {
+            _id: '24',
+            name: 'I am a fake task',
             status: 'active'
           };
           $scope.$digest();
-          $scope.$broadcast('modal.shown', $scope.dialog);
           $httpBackend.flush();
+        });
+
+        it('assigns the fetched projects to the controller project list', function() {
+          expect(angular.equals(controller.projects, testProjects)).to.be.true;
+        });
+
+        it('copies the timer to the editor model', function() {
+          expect(controller.editModel).to.not.equal($scope.taskTimer);
+          expect(angular.equals(controller.editModel, $scope.taskTimer)).to.be.true;
+        });
+
+        it('sets the title to "Modify Timer"', function() {
+          expect(controller.title).to.equal('Modify Timer');
+        });
+
+        it('leaves the time spent undefined', function() {
           expect(controller.timeSpent).to.be.undefined;
         });
       });
 
-      describe('some other dialog', function() {
-        it('does not fetch projects or initialize the editor', function() {
-          $scope.$broadcast('modal.shown', {});
+      describe('to a new task timer', function() {
+        beforeEach(function() {
+          $scope.taskTimer = {
+            status: 'active'
+          };
           $scope.$digest();
-          expect(controller.projects).to.deep.equal([]);
-          expect(angular.equals(controller.editModel, {})).to.be.true;
+          $httpBackend.flush();
+        });
+
+        it('assigns the fetched projects to the controller project list', function() {
+          expect(angular.equals(controller.projects, testProjects)).to.be.true;
+        });
+
+        it('copies the timer to the editor model', function() {
+          expect(controller.editModel).to.not.equal($scope.taskTimer);
+          expect(angular.equals(controller.editModel, $scope.taskTimer)).to.be.true;
+        });
+
+        it('sets the title to "New Timer"', function() {
+          expect(controller.title).to.equal('New Timer');
+        });
+
+        it('leaves the time spent undefined', function() {
+          expect(controller.timeSpent).to.be.undefined;
         });
       });
     });
@@ -210,20 +230,17 @@
     describe('saving an existing task timer', function() {
       var controller;
       beforeEach(function() {
-        $scope.taskTimer = {
-          _id: 42378,
-          name: 'I am existing timer',
-          timesheetRid: 3,
-          project: testProjects[1]
-        };
         $scope.dialog = {
           hide: sinon.stub()
         };
         var el = compile('<ht-task-timer-editor ht-dialog="dialog" ht-task-timer="taskTimer"></ht-task-timer-editor>');
         controller = el.isolateScope().controller;
-        $httpBackend.expectGET(config.dataService + '/projects?status=active').respond(200, testProjects);
-        $scope.$broadcast('modal.shown', $scope.dialog);
-        $httpBackend.flush();
+        showDialog({
+          _id: 42378,
+          name: 'I am existing timer',
+          timesheetRid: 3,
+          project: testProjects[1]
+        });
       });
 
       it('shows the wait spinner', function() {
@@ -339,17 +356,14 @@
     describe('saving a new task timer', function() {
       var controller;
       beforeEach(function() {
-        $scope.taskTimer = {
-          timesheetRid: 78
-        };
         $scope.dialog = {
           hide: sinon.stub()
         };
         var el = compile('<ht-task-timer-editor ht-dialog="dialog" ht-task-timer="taskTimer"></ht-task-timer-editor>');
         controller = el.isolateScope().controller;
-        $httpBackend.expectGET(config.dataService + '/projects?status=active').respond(200, testProjects);
-        $scope.$broadcast('modal.shown', $scope.dialog);
-        $httpBackend.flush();
+        showDialog({
+          timesheetRid: 78
+        });
       });
 
       it('shows the wait spinner', function() {
@@ -440,18 +454,18 @@
     });
 
     function initializeTestData() {
-      testProjects = [{_id: '42', name: 'Admit It Ted', jiraTaskId: 'AA-101', status: 'active'},
-        {_id: '73', name: 'Believe', jiraTaskId: 'AA-102', status: 'active'},
-        {_id: '24', name: 'Project Editor', jiraTaskId: 'HT-123', sbvbTaskId: 'RFP14141', status: 'active'},
-        {_id: '314159', name: 'Time Report', jiraTaskId: 'HT-211', sbvbTaskId: 'RFP14141', status: 'active'},
-        {_id: '96', status: 'active', name: 'Talk about stuff and help each other out', jiraTaskId: 'AA-201'}];
+      testProjects = [{ _id: '42', name: 'Admit It Ted', jiraTaskId: 'AA-101', status: 'active' },
+        { _id: '73', name: 'Believe', jiraTaskId: 'AA-102', status: 'active' },
+        { _id: '24', name: 'Project Editor', jiraTaskId: 'HT-123', sbvbTaskId: 'RFP14141', status: 'active' },
+        { _id: '314159', name: 'Time Report', jiraTaskId: 'HT-211', sbvbTaskId: 'RFP14141', status: 'active' },
+        { _id: '96', status: 'active', name: 'Talk about stuff and help each other out', jiraTaskId: 'AA-201' }];
 
       testStages = [
-        {_id: '93', stageNumber: 1, name: 'Stage 1'},
-        {_id: '11', stageNumber: 2, name: 'Stage 2'},
-        {_id: '82', stageNumber: 3, name: 'Stage 3'},
-        {_id: '89', stageNumber: 4, name: 'Stage 4'},
-        {_id: '87', stageNumber: 5, name: 'Stage 5'}
+        { _id: '93', stageNumber: 1, name: 'Stage 1' },
+        { _id: '11', stageNumber: 2, name: 'Stage 2' },
+        { _id: '82', stageNumber: 3, name: 'Stage 3' },
+        { _id: '89', stageNumber: 4, name: 'Stage 4' },
+        { _id: '87', stageNumber: 5, name: 'Stage 5' }
       ];
     }
 
@@ -462,5 +476,12 @@
 
       return el;
     }
+
+    function showDialog(tt) {
+      $httpBackend.whenGET(config.dataService + '/projects?status=active').respond(200, testProjects);
+      $scope.taskTimer = tt;
+      $scope.$digest();
+      $httpBackend.flush();
+    }
   });
-}());
+} ());

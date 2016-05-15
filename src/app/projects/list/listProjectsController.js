@@ -67,6 +67,12 @@
           createProject();
         }
       });
+
+      $scope.$on('modal.hidden', function(evt, dialog) {
+        if (dialog === controller.projectEditor) {
+          controller.currentProject = undefined;
+        }
+      });
     }
   }
 }());
