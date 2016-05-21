@@ -24,8 +24,7 @@
       templateUrl: 'app/timesheets/edit/htTaskTimerEditor.html',
       scope: {},
       bindToController: {
-        htTaskTimer: '=ngModel',
-        htModel: '=',
+        htTaskTimer: '=',
         htTaskTimers: '=',
         htDialog: '='
       },
@@ -34,8 +33,8 @@
     };
   }
 
-  function HtTaskTimerEditorController($log, $scope, $ionicModal, Project, TaskTimer, stages, timesheetTaskTimers,
-                                       waitSpinner, EditorMode, Status, hoursMinutesFilter, timeUtility) {
+  function HtTaskTimerEditorController($scope, $ionicModal, Project, TaskTimer, stages, timesheetTaskTimers,
+    waitSpinner, EditorMode, Status, hoursMinutesFilter, timeUtility) {
     var controller = this;
 
     controller.editModel = new TaskTimer();
@@ -71,7 +70,7 @@
 
     function activate() {
       initializeFinderDialogs();
-      $scope.$on('modal.shown', resetData);
+      $scope.$watch('controller.htTaskTimer', resetData);
     }
 
     function initializeFinderDialogs() {
@@ -107,17 +106,15 @@
       return '<ion-modal-view>' + template + '</ion-modal-view>';
     }
 
-    function resetData(evt, dialog) {
-      if (dialog === controller.htDialog) {
+    function resetData(current, previous) {
+      if (current && current !== previous) {
         fetchProjects();
         initializeEditor();
       }
-
-      $log.log($scope.taskTimerEditor.$error);
     }
 
     function fetchProjects() {
-      controller.projects = Project.query({status: Status.active});
+      controller.projects = Project.query({ status: Status.active });
     }
 
     function initializeEditor() {
@@ -144,4 +141,4 @@
       controller.title = (controller.htTaskTimer._id ? 'Modify Timer' : 'New Timer');
     }
   }
-}());
+} ());

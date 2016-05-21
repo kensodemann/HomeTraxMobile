@@ -16,8 +16,7 @@
       get: function elapsedTime() {
         var ms = this.milliseconds || 0;
         if (this.isActive) {
-          var now = (new Date()).getTime();
-          ms += (now - this.startTime);
+          ms += (this._currentTime - this.startTime);
         }
 
         return ms;

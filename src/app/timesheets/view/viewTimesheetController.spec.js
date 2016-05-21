@@ -67,18 +67,15 @@
 
     beforeEach(function() {
       mockTaskTimerEditor = sinon.stub({
-        show: function() {
-        },
+        show: function() { },
 
-        remove: function() {
-        }
+        remove: function() { }
       });
     });
 
     beforeEach(function() {
       mockIonicModal = sinon.stub({
-        fromTemplate: function() {
-        }
+        fromTemplate: function() { }
       });
       mockIonicModal.fromTemplate.returns(mockTaskTimerEditor);
     });
@@ -224,7 +221,16 @@
 
       it('schedules a refresh of data every 15 seconds', function() {
         createController();
+        getDfd.resolve(testTimesheet);
+        $scope.$digest();
+        loadDfd.resolve();
+        $scope.$digest();
+        timesheetTaskTimers.load.reset();
+        timesheetTaskTimers.get.reset();
+        timesheetTaskTimers.totalTime.reset();
         $interval.flush(15000);
+        expect(timesheetTaskTimers.load.calledOnce).to.be.true;
+        expect(timesheetTaskTimers.load.calledWith(testTimesheet)).to.be.true;
         expect(timesheetTaskTimers.get.calledOnce).to.be.true;
         expect(timesheetTaskTimers.totalTime.calledOnce).to.be.true;
       });
@@ -238,6 +244,9 @@
         controller = createController();
         getDfd.resolve(testTimesheet);
         $scope.$digest();
+        loadDfd.resolve();
+        $scope.$digest();
+        timesheetTaskTimers.load.reset();
         timesheetTaskTimers.get.reset();
         timesheetTaskTimers.totalTime.reset();
       });
@@ -245,6 +254,8 @@
       it('gets the task timers for the new date', function() {
         controller.currentDate = '2015-12-30';
         $scope.$digest();
+        expect(timesheetTaskTimers.load.calledOnce).to.be.true;
+        expect(timesheetTaskTimers.load.calledWith(testTimesheet)).to.be.true;
         expect(timesheetTaskTimers.get.calledOnce).to.be.true;
         expect(timesheetTaskTimers.get.calledWith('2015-12-30')).to.be.true;
       });
@@ -272,6 +283,9 @@
         controller = createController();
         getDfd.resolve(testTimesheet);
         $scope.$digest();
+        loadDfd.resolve();
+        $scope.$digest();
+        timesheetTaskTimers.load.reset();
         timesheetTaskTimers.get.reset();
         timesheetTaskTimers.totalTime.reset();
       });
@@ -294,10 +308,19 @@
         it('refreshes the timer list and total time for today', function() {
           $scope.$broadcast('modal.hidden', controller.taskTimerEditor);
           $scope.$digest();
+          expect(timesheetTaskTimers.load.calledOnce).to.be.true;
+          expect(timesheetTaskTimers.load.calledWith(testTimesheet)).to.be.true;
           expect(timesheetTaskTimers.get.calledOnce).to.be.true;
           expect(timesheetTaskTimers.get.calledWith('2015-12-31')).to.be.true;
           expect(timesheetTaskTimers.totalTime.calledOnce).to.be.true;
           expect(timesheetTaskTimers.totalTime.calledWith('2015-12-31')).to.be.true;
+        });
+
+        it('sets current task timer undefind', function() {
+          controller.currentTaskTimer = { _id: 42 };
+          $scope.$broadcast('modal.hidden', controller.taskTimerEditor);
+          $scope.$digest();
+          expect(controller.currentTaskTimer).to.be.undefined;
         });
       });
     });
@@ -388,11 +411,17 @@
       var controller;
       beforeEach(function() {
         controller = createController();
-        controller.currentDate = '2015-12-31';
         sinon.stub(messageDialog, 'ask');
         sinon.stub(timesheetTaskTimers, 'delete');
         messageDialog.ask.returns(askDfd.promise);
         timesheetTaskTimers.delete.returns(deleteDfd.promise);
+        getDfd.resolve(testTimesheet);
+        $scope.$digest();
+        loadDfd.resolve();
+        $scope.$digest();
+        controller.currentDate = '2015-12-31';
+        $scope.$digest();
+        timesheetTaskTimers.load.reset();
         timesheetTaskTimers.get.reset();
         timesheetTaskTimers.totalTime.reset();
       });
@@ -415,7 +444,10 @@
         });
 
         beforeEach(function() {
-          controller.deleteTaskTimer({id: 42, name: 'Adams'});
+          controller.deleteTaskTimer({
+            id: 42,
+            name: 'Adams'
+          });
           askDfd.resolve(true);
           $scope.$digest();
         });
@@ -427,7 +459,10 @@
 
         it('removes the task timer', function() {
           expect(timesheetTaskTimers.delete.calledOnce).to.be.true;
-          expect(timesheetTaskTimers.delete.calledWith({id: 42, name: 'Adams'})).to.be.true;
+          expect(timesheetTaskTimers.delete.calledWith({
+            id: 42,
+            name: 'Adams'
+          })).to.be.true;
         });
 
         it('shows a wait spinner', function() {
@@ -446,6 +481,8 @@
           });
 
           it('refreshes the task timers for the current date', function() {
+            expect(timesheetTaskTimers.load.calledOnce).to.be.true;
+            expect(timesheetTaskTimers.load.calledWith(testTimesheet)).to.be.true;
             expect(timesheetTaskTimers.get.calledOnce).to.be.true;
             expect(timesheetTaskTimers.get.calledWith('2015-12-31')).to.be.true;
           });
@@ -487,7 +524,10 @@
 
       describe('if the user does not want to', function() {
         beforeEach(function() {
-          controller.deleteTaskTimer({id: 42, name: 'Adams'});
+          controller.deleteTaskTimer({
+            id: 42,
+            name: 'Adams'
+          });
           askDfd.resolve(false);
           $scope.$digest();
         });
@@ -506,6 +546,9 @@
         controller = createController();
         getDfd.resolve(testTimesheet);
         $scope.$digest();
+        loadDfd.resolve();
+        $scope.$digest();
+        timesheetTaskTimers.load.reset();
         timesheetTaskTimers.get.reset();
         timesheetTaskTimers.totalTime.reset();
       });
@@ -535,6 +578,7 @@
           expect(timesheetTaskTimers.get.called).to.be.false;
           startDfd.resolve();
           $scope.$digest();
+          expect(timesheetTaskTimers.load.calledOnce).to.be.true;
           expect(timesheetTaskTimers.get.calledOnce).to.be.true;
           expect(timesheetTaskTimers.get.calledWith('2015-12-31')).to.be.true;
         });
@@ -544,6 +588,7 @@
           expect(timesheetTaskTimers.totalTime.called).to.be.false;
           startDfd.resolve();
           $scope.$digest();
+          expect(timesheetTaskTimers.load.calledOnce).to.be.true;
           expect(timesheetTaskTimers.totalTime.calledOnce).to.be.true;
           expect(timesheetTaskTimers.totalTime.calledWith('2015-12-31')).to.be.true;
         });
@@ -641,18 +686,18 @@
         _id: 2,
         name: 'Test Data #1'
       }, {
-        _id: 3,
-        name: 'Test Data #1'
-      }, {
-        _id: 5,
-        name: 'Test Data #1'
-      }, {
-        _id: 7,
-        name: 'Test Data #1'
-      }, {
-        _id: 11,
-        name: 'Test Data #1'
-      }];
+          _id: 3,
+          name: 'Test Data #1'
+        }, {
+          _id: 5,
+          name: 'Test Data #1'
+        }, {
+          _id: 7,
+          name: 'Test Data #1'
+        }, {
+          _id: 11,
+          name: 'Test Data #1'
+        }];
     }
   });
-}());
+} ());

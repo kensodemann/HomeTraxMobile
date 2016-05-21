@@ -15,9 +15,12 @@
         <ion-label>JIRA Task Id</ion-label>
         <input type="text" ng-model="controller.editModel.jiraTaskId">
       </ion-input>
-      <ion-input class="item item-input">
+      <ion-input class="item item-input" ng-class="{'ion-input-error': projectEditor.sbvbTask.$invalid}">
         <ion-label>SBVB Task Id</ion-label>
-        <input type="text" ng-model="controller.editModel.sbvbTaskId">
+        <input name="sbvbTask" type="text" ng-model="controller.editModel.sbvbTaskId" required>
+        <div ng-messages="projectEditor.sbvbTask.$error" role="alert">
+          <div ng-messages-include="app/common/templates/errorMessages.html"></div>
+        </div>
       </ion-input>
       <ion-input>
         <ion-checkbox ng-model="controller.projectIsActive"

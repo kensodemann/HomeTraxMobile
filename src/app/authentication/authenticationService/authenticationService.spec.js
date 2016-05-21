@@ -9,12 +9,10 @@
     var config;
     var authenticationService;
     var authenticationToken;
-    var scope;
 
     beforeEach(module('homeTrax.authentication.authenticationService'));
 
-    beforeEach(inject(function($rootScope, _$httpBackend_, _config_, _authenticationService_, _authenticationToken_, _identity_) {
-      scope = $rootScope;
+    beforeEach(inject(function(_$httpBackend_, _config_, _authenticationService_, _authenticationToken_, _identity_) {
       config = _config_;
       $httpBackend = _$httpBackend_;
       authenticationService = _authenticationService_;

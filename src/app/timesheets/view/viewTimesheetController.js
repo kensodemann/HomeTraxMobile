@@ -16,16 +16,16 @@
   ]).controller('viewTimesheetController', ViewTimesheetController)
     .config(function($stateProvider) {
       $stateProvider.state('app.timesheets.viewCurrent', {
-          url: '/view',
-          htEnableNewItemMenuItem: true,
-          views: {
-            'timesheets': {
-              templateUrl: 'app/timesheets/view/viewTimesheet.html',
-              controller: 'viewTimesheetController',
-              controllerAs: 'controller'
-            }
+        url: '/view',
+        htEnableNewItemMenuItem: true,
+        views: {
+          'timesheets': {
+            templateUrl: 'app/timesheets/view/viewTimesheet.html',
+            controller: 'viewTimesheetController',
+            controllerAs: 'controller'
           }
-        })
+        }
+      })
         .state('app.timesheets.view', {
           url: '/view/:id',
           htEnableNewItemMenuItem: true,
@@ -40,7 +40,7 @@
     });
 
   function ViewTimesheetController($scope, $state, $interval, $window, $stateParams, $ionicModal, $q, messageDialog,
-                                   timesheets, timesheetTaskTimers, TaskTimer, waitSpinner) {
+    timesheets, timesheetTaskTimers, TaskTimer, waitSpinner) {
     var controller = this;
 
     controller.currentTaskTimer = undefined;
@@ -53,11 +53,10 @@
     activate();
 
     function createTaskTimer() {
-      controller.currentTaskTimer = new TaskTimer();
-      angular.copy({
+      controller.currentTaskTimer = new TaskTimer({
         workDate: controller.currentDate,
         timesheetRid: controller.timesheet._id
-      }, controller.currentTaskTimer);
+      });
       controller.taskTimerEditor.show();
     }
 
@@ -90,7 +89,7 @@
       getTimesheet().then(refreshCurrentData);
       createTaskTimerEditor();
       $scope.$watch('controller.currentDate', refreshOnDateChange);
-      $scope.$on('modal.hidden', refreshOnDialogHidden);
+      $scope.$on('modal.hidden', handleEditorDialogHidden);
       $interval(refreshCurrentData, 15000);
       $scope.$on('home-trax-new-item', function() {
         if ($state.current.name === 'app.timesheets.viewCurrent' || $state.current.name === 'app.timesheets.view') {
@@ -100,7 +99,7 @@
     }
 
     function createTaskTimerEditor() {
-      var template = '<ion-modal-view><ht-task-timer-editor ht-dialog="controller.taskTimerEditor" ng-model="controller.currentTaskTimer"></ht-task-timer-editor></ion-modal-view>';
+      var template = '<ion-modal-view><ht-task-timer-editor ht-dialog="controller.taskTimerEditor" ht-task-timer="controller.currentTaskTimer"></ht-task-timer-editor></ion-modal-view>';
       controller.taskTimerEditor = $ionicModal.fromTemplate(template, {
         scope: $scope,
         backdropClickToClose: false,
@@ -112,17 +111,12 @@
     }
 
     function getTimesheet() {
-      var dfd = $q.defer();
-
-      var p = (!!$stateParams.id ? timesheets.get($stateParams.id) : timesheets.getCurrent());
-      p.then(getTaskTimers, dfd.reject);
-
-      return dfd.promise;
+      return (!!$stateParams.id ? timesheets.get($stateParams.id) : timesheets.getCurrent()).then(getTaskTimers);
 
       function getTaskTimers(ts) {
         controller.timesheet = ts;
         controller.currentDate = defaultDate();
-        timesheetTaskTimers.load(ts).then(dfd.resolve, dfd.reject);
+        return timesheetTaskTimers.load(ts);
       }
     }
 
@@ -139,19 +133,22 @@
       }
     }
 
-    function refreshOnDialogHidden(evt, dialog) {
+    function handleEditorDialogHidden(evt, dialog) {
       if (dialog === controller.taskTimerEditor) {
+        controller.currentTaskTimer = undefined;
         refreshCurrentData();
       }
     }
 
     function refreshCurrentData() {
-      controller.taskTimers = timesheetTaskTimers.get(controller.currentDate);
-      controller.totalTime = timesheetTaskTimers.totalTime(controller.currentDate);
+      timesheetTaskTimers.load(controller.timesheet).then(function() {
+        controller.taskTimers = timesheetTaskTimers.get(controller.currentDate);
+        controller.totalTime = timesheetTaskTimers.totalTime(controller.currentDate);
+      });
     }
 
     function displayError(res) {
       messageDialog.error('Error', res.data.reason);
     }
   }
-}());
+} ());

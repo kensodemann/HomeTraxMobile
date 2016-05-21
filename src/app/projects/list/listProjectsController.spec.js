@@ -168,14 +168,14 @@
     describe('creating a project', function() {
       var controller;
       beforeEach(function() {
-        $httpBackend.expectGET(config.dataService + '/projects').respond(200, testData);
+        $httpBackend.whenGET(config.dataService + '/projects').respond(200, testData);
         controller = createController();
         $httpBackend.flush();
       });
 
       it('sets the current project to a new active project', function() {
         controller.create();
-        expect(angular.equals(controller.currentProject, {status: Status.active})).to.be.true;
+        expect(angular.equals(controller.currentProject, { status: Status.active })).to.be.true;
       });
 
       it('shows the editor', function() {
@@ -194,7 +194,7 @@
 
       it('sets the current project to a new active project', function() {
         $rootScope.$broadcast('home-trax-new-item');
-        expect(angular.equals(controller.currentProject, {status: Status.active})).to.be.true;
+        expect(angular.equals(controller.currentProject, { status: Status.active })).to.be.true;
       });
 
       it('shows the editor', function() {
@@ -206,6 +206,31 @@
         mockState.current.name = 'app.something.else';
         $rootScope.$broadcast('home-trax-new-item');
         expect(mockModalController.show.called).to.be.false;
+      });
+    });
+
+    describe('on project editor close', function() {
+      var controller;
+      beforeEach(function() {
+        $httpBackend.whenGET(config.dataService + '/projects').respond(200, testData);
+        controller = createController();
+        $httpBackend.flush();
+      });
+
+      it('sets the current project undefined', function() {
+        controller.edit(controller.projects[1]);
+        expect(controller.currentProject).to.equal(controller.projects[1]);
+        $scope.$broadcast('modal.hidden', controller.projectEditor);
+        $scope.$digest();
+        expect(controller.currentProject).to.be.undefined;
+      });
+
+      it('does not set the current project undefined if it is some other dialog that is hidden', function() {
+        controller.edit(controller.projects[1]);
+        expect(controller.currentProject).to.equal(controller.projects[1]);
+        $scope.$broadcast('modal.hidden', {});
+        $scope.$digest();
+        expect(controller.currentProject).to.equal(controller.projects[1]);
       });
     });
 
@@ -225,12 +250,12 @@
         _id: 314,
         name: 'Cherry Pi'
       }, {
-        _id: 73,
-        name: 'Big Bang Theory'
-      }, {
-        _id: 42,
-        name: 'The Answer'
-      }];
+          _id: 73,
+          name: 'Big Bang Theory'
+        }, {
+          _id: 42,
+          name: 'The Answer'
+        }];
     }
   });
-}());
+} ());

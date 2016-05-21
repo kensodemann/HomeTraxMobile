@@ -10,12 +10,12 @@
 
   function authenticationService($http, identity, $q, User, config, authenticationToken) {
     return {
-      authenticateUser: authenticationService,
+      authenticateUser: authenticateUser,
       refreshLogin: refreshLogin,
       logoutUser: logoutUser
     };
 
-    function authenticationService(username, password) {
+    function authenticateUser(username, password) {
       var dfd = $q.defer();
       $http.post(config.dataService + '/login', {
         username: username,

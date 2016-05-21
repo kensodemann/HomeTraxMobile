@@ -30,7 +30,7 @@
     controller.edit = editProject;
     controller.create = createProject;
 
-    controller.currentProject = {};
+    controller.currentProject = undefined;
 
     activate();
 
@@ -65,6 +65,12 @@
       $scope.$on('home-trax-new-item', function() {
         if ($state.current.name === 'app.projects.list') {
           createProject();
+        }
+      });
+
+      $scope.$on('modal.hidden', function(evt, dialog) {
+        if (dialog === controller.projectEditor) {
+          controller.currentProject = undefined;
         }
       });
     }
