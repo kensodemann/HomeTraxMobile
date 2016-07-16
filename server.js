@@ -1,14 +1,7 @@
 /* jshint node: true */
 
 // configurable global app settings
-var port = process.env.port || 8082;
-
-// load in command line option, really this only supports a single value
-// that can be used to change deafult port.
-var args = process.argv.slice(2);
-if (args.length > 0) {
-  port = parseInt(args[0]);
-}
+var port = process.env.port || process.env.PORT || 8082;
 
 // init core node / express vars.
 var express = require('express');
@@ -30,5 +23,5 @@ app.use('/api', apiRoutes);
 
 // start it up!!!
 app.listen(port, function(){
-  console.log('PENTA: Server listening on port: ' + port);
+  console.log('HomeTrax: Server listening on port: ' + port);
 });
